@@ -112,7 +112,7 @@ def set_variable_value():
     print("Received request to update setting: " + variable_name + " to new value: " + variable_to_set[variable_name])
     if "SHED" in variable_name:
         queue.put({"update_shed_request": variable_to_set})
-    if "high_" in variable_name or "low_" in variable_name:
+    elif "high_" in variable_name or "low_" in variable_name:
         queue.put({"limit_set_request": variable_to_set})
     else:
         queue.put({"write_channels": variable_to_set})
@@ -156,6 +156,8 @@ def background_tasks(queue=Queue):
                         update_shed_request(task[key])
                     elif key == "limit_set_request":
                         update_alarm_limit(task[key])
+                    else:
+                        print("Background task error: The task does not exist")
             t_now = datetime.now()
             sleep(0.01)
         t_next = t_next + timedelta(seconds=1)              # runs every 1 second (Slower tasks, reading daq etc)
