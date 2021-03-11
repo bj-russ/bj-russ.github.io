@@ -89,7 +89,7 @@ def all_health():
 @app.route('/all_control')
 def all_control():
     print("Page reload")
-    print(alarm["Gas_analyzer_shed2"].limit_low)
+    #print(alarm["Gas_analyzer_shed2"].limit_low)
     return render_template('all_control.html', vars_eng = vars_eng, limits = alarm, shed=shed_status)
 
 #------------------- Data routes used by JQuery ------------------------------------------------------------------------
@@ -101,7 +101,9 @@ def update_page_data():
     for variable in variables_requested:
         if variable in vars_eng.keys():
             data[variable] = vars_eng[variable]
-    #print(variables_requested)
+        elif "SHED" in variable:
+            print(variable, shed_status[variable].state)
+            data[variable] = shed_status[variable].state
     return jsonify(ajax_data=data)
 
 @app.route('/_set_variable_value')                                 #Accepts requested control variable from user and sends values to background task.
@@ -170,6 +172,7 @@ def background_tasks(queue=Queue):
 #---------------------- Update SHED operation functions ----------------------------------------------------------------
 
 def update_shed_request(request): # update shed request from webpage
+    print(request)
     for key, value in request.items():
         shed_status[key].change_state(value)
         daq.write_channels(shed_status[key].new_state_output())
