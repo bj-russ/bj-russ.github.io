@@ -37,12 +37,12 @@ def raw_to_eng(data, calibration):
     new_data = {}
     for key, value in data.items():
         if key.endswith("_l", 7,9) or key.endswith("_r", 7,9):
-            new_data[key] = round(float(value*calibration[key]),2)
+            new_data[key] = value*calibration[key]
         #elif key.startswith("Flowmeter_"):
         #    print(key, value)
         #    new_data[key] = frequency_to_flowrate(key,value)
         else:
-            new_data[key] = round(float(value), 2)
+            new_data[key] = value
     return new_data
 
 def alarm_limit_check(var_eng_dict,alarm_dict):

@@ -46,6 +46,7 @@ for channel in daq_channels:
 vars_eng = {}
 for channel in vars_raw.keys():
     vars_eng[channel] = 0 #vars_raw[channel]
+vars_disp = vars_eng
 vars_sys = {}
 for channel in settings['system_variables'].keys():
     vars_sys[channel] = settings['system_variables'][channel]
@@ -90,7 +91,7 @@ def all_health():
 def all_control():
     print("Page reload")
     #print(alarm["Gas_analyzer_shed2"].limit_low)
-    return render_template('all_control.html', vars_eng = vars_eng, limits = alarm, shed=shed_status)
+    return render_template('all_control.html', vars_eng = vars_disp, limits = alarm, shed=shed_status)
 
 #------------------- Data routes used by JQuery ------------------------------------------------------------------------
 
@@ -99,11 +100,21 @@ def update_page_data():
     variables_requested = list(request.args.to_dict().keys())
     data = {}
     for variable in variables_requested:
-        if variable in vars_eng.keys():
-            data[variable] = vars_eng[variable]
+        if variable in vars_disp.keys():
+            data[variable] = vars_disp[variable]
         elif "SHED" in variable:
-            print(variable, shed_status[variable].state)
-            data[variable] = shed_status[variable].state
+            print(variable, shed_status[variable].request)
+            data[variable] = shed_status[variable].request
+        elif "alarm_" in variable:
+            temp_var = variable[6:]
+            data[variable] = alarm[temp_var].state
+        elif "warning_" in variable:
+            temp_var = variable[8:]
+            data[variable] = alarm[temp_var].state
+        elif "pid_" in variable:
+            temp_shedvar = variable[4:].upper()
+            data[variable] = shed_status[temp_shedvar].pid_state
+            #print(data)
     return jsonify(ajax_data=data)
 
 @app.route('/_set_variable_value')                                 #Accepts requested control variable from user and sends values to background task.
@@ -116,6 +127,10 @@ def set_variable_value():
         queue.put({"update_shed_request": variable_to_set})
     elif "high_" in variable_name or "low_" in variable_name:
         queue.put({"limit_set_request": variable_to_set})
+    elif "pid" in variable_name:
+        queue.put({"PID_change_request" : variable_to_set})
+    elif "setpoint_" in variable_name:
+        queue.put({"SHED_setpoint_request" : variable_to_set})
     else:
         queue.put({"write_channels": variable_to_set})
 
@@ -158,6 +173,10 @@ def background_tasks(queue=Queue):
                         update_shed_request(task[key])
                     elif key == "limit_set_request":
                         update_alarm_limit(task[key])
+                    elif key == "PID_change_request":
+                        pid_onoff(task[key])
+                    elif key == "SHED_setpoint_request":
+                        setpoint_change(task[key])
                     else:
                         print("Background task error: The task does not exist")
             t_now = datetime.now()
@@ -166,18 +185,23 @@ def background_tasks(queue=Queue):
         t_now = datetime.now()
         read_daq()
         update_calculated_variables()
-
-        alarm_monitor()
+        alarm_monitor()  # Alarm monitor needs to be before update_display_variables() for some reason
+        update_display_variables()
+        
 
 #---------------------- Update SHED operation functions ----------------------------------------------------------------
 
 def update_shed_request(request): # update shed request from webpage
-    print(request)
+    #print(request)
     for key, value in request.items():
-        shed_status[key].change_state(value)
+        shed_status[key].change_request(value)
+        shed_status[key].update_state()
+        print(shed_status[key].state)
+        print(shed_status[key].new_state_output())
         daq.write_channels(shed_status[key].new_state_output())
     if shed_status["SHED1"].state == shed_status["SHED2"].state == shed_status["SHED3"].state == "off":
         daq.write_channels(all_off)
+    
 
 
 def update_alarm_limit(request):
@@ -196,15 +220,44 @@ def update_alarm_limit(request):
 def alarm_monitor():
     for key in alarm:
         alarm[key].update_state(vars_eng[key])
-
+    # print(alarm['Flowmeter_shed1_cold'].limit_low, vars_eng['Flowmeter_shed1_cold'], alarm['Flowmeter_shed1_cold'].limit_high)    
+    # print(alarm['Flowmeter_shed1_cold'].state)
+    
 def shed_pid(shed_label): #shed_label should be SHED2 or 3 depending which is active
     pid_output = {}
     pid_output[shed_status[shed_label].pid_valve] = shed_status[shed_label].pid_func(vars_eng[shed_status[shed_label].pid_control])
 
+def pid_onoff(pid_shed):
+    for key, value in pid_shed.items():
+        temp_shedvar = key[4:].upper()
+        shed_status[temp_shedvar].change_pid(value)
+
+def setpoint_change(task):
+    for key, value in task.items():
+        temp_shedvar = key[-5:].upper()
+        temp_change = key[-7].lower()
+        print(temp_shedvar, temp_change)
+        if "_T_" in key:
+            shed_status[temp_shedvar].set_temp = value
+        else:
+            shed_status[temp_shedvar].temp_change = value
+
+
 
 def update_calculated_variables():
-    vars_eng["T_shed2"] = str(round((vars_eng["T_shed2_l"] + vars_eng["T_shed2_r"] / 2), 2)) 
-    vars_eng["T_shed3"] = str(round((vars_eng["T_shed3_l"] + vars_eng["T_shed3_r"] / 2), 2))
+    vars_eng["T_shed2"] = round((vars_eng["T_shed2_l"] + vars_eng["T_shed2_r"] / 2), 2)
+    vars_eng["T_shed3"] = round((vars_eng["T_shed3_l"] + vars_eng["T_shed3_r"] / 2), 2)
+
+def update_display_variables():
+    vars_disp = vars_eng
+    # vars_disp["T_shed2"] = str(round(float(vars_eng["T_shed2"]), 1)) + u'\N{DEGREE SIGN}' + "C"
+    # vars_disp["T_shed3"] = str(round(float(vars_eng["T_shed3"]),1)) + u'\N{DEGREE SIGN}' + "C"
+
+    for key in vars_eng.keys():
+        if "Flowmeter" in key:
+            vars_disp[key] = str(round(float(vars_eng[key]),2)) + " GPM"
+        if "T_shed" in key:
+             vars_disp[key] = str(round(float(vars_eng[key]), 1)) + ' ' + u'\N{DEGREE SIGN}' + "C"
 
 def deadhead_protection():
     pass

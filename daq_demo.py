@@ -91,7 +91,7 @@ class dataforth():
                         value = channels[key]
                     #channel_to_write = str(self.channel_map_outputs[key])
                     #exec("self." + channel_to_write + '=' + str(value))
-                    print(value)
+                    #print(value)
                     self.outputs[key] = value
                 else:
                     print("Channel not found")

@@ -113,3 +113,41 @@
     border: 2px solid black;
     border-collapse: collapse;
   }
+
+
+  /* For Traffic light */
+  .traffic-light
+{
+  width:50px;
+  height:75px;
+  background-color:rgb(228, 228, 228);
+}
+
+.light
+{
+  width:20px;
+  height:20px;
+  border:1px solid;
+  margin-left:auto;
+  margin-right:auto;
+  border-radius: 50px;
+}
+
+.red
+{
+  background-color:red
+}
+.amber
+{
+  background-color:yellow
+}
+.green
+{
+  background-color:green;
+}
+
+.off
+{
+  background-color:transparent;
+ }
+

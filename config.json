@@ -186,7 +186,7 @@
             "PID": {
                 "control": "T_shed2",
                 "valve_control": "Valve_shed2_hot",
-                "on/off": "off",
+                "on/off": false,
                 "p": 0,
                 "i": 0,
                 "d": 0
@@ -226,12 +226,8 @@
             "request" : "off",
             "state" : "off",
             "set_temp": 42,
-            "limits":{
-                "high": 45,
-                "low": 41
-            },
             "PID": {
-                "on/off": "off",
+                "on/off": false,
                 "control": "T_shed3",
                 "valve_control": "Valve_shed3_hot",
                 "p": 0,
@@ -283,7 +279,7 @@
     "alarm":{
         "Alarm_shed1":{
             "state":0,
-            "limit_type": "inside",
+            "limit_type": "D",
             "limits":{ 
                 "high":1,
                 "low":0
@@ -333,7 +329,7 @@
             "limit_type": "inside",
             "limits": {
                 "high": 10,
-                "low": 0
+                "low": 3
             },
             "active_config":{}
         },
@@ -342,7 +338,7 @@
             "limit_type": "inside",
             "limits": {
                 "high": 10,
-                "low": 0
+                "low": 3
             },
             "active_config":{}
         },
@@ -351,7 +347,7 @@
             "limit_type": "inside",
             "limits": {
                 "high": 10,
-                "low": 0
+                "low": 2
             },
             "active_config":{}
         },
@@ -360,7 +356,7 @@
             "limit_type": "inside",
             "limits": {
                 "high": 10,
-                "low": 0
+                "low": 1
             },
             "active_config":{}
         },
@@ -368,7 +364,7 @@
             "state": 0,
             "limit_type": "inside",
             "limits": {
-                "high": 10,
+                "high": 3,
                 "low": 0
             },
             "active_config":{}
@@ -377,7 +373,7 @@
             "state": 0,
             "limit_type": "inside",
             "limits": {
-                "high": 10,
+                "high": 4,
                 "low": 0
             },
             "active_config":{}
@@ -386,7 +382,7 @@
             "state": 0,
             "limit_type": "inside",
             "limits": {
-                "high": 10,
+                "high": 5,
                 "low": 0
             },
             "active_config":{}
@@ -395,7 +391,7 @@
             "state": 0,
             "limit_type": "inside",
             "limits": {
-                "high": 10,
+                "high": 6,
                 "low": 0
             },
             "active_config":{}
@@ -476,34 +472,42 @@
     },
     "deadhead":{
         "Valve_shed3_hot": {
+            "state": 0,
             "limit": 0.5,
             "contol": "Pump_shed3_hot"
         },
         "Valve_shed3_cold": {
+            "state": 0,
             "limit": 0.5,
             "contol": "Pump_shed3_cold"
         },
         "Valve_shed2_hot": {
+            "state": 0,
             "limit": 0.5,
             "contol": "Pump_shed2_hot"
         },
         "Valve_shed2_cold": {
+            "state": 0,
             "limit": 0.5,
             "contol": "Pump_shed2_cold"
         },
         "Valve_main_hot": {
+            "state": 0,
             "limit": 0.5,
             "contol": "Pump_main_hot"
         }, 
         "Valve_main_cold": {
+            "state": 0,
             "limit": 0.5,
             "contol": "Pump_main_cold"
         },
         "Valve_shed1_cold": {
+            "state": 0,
             "limit": 0.5,
             "contol": "Pump_shed1_cold"
         },
         "Valve_shed1_hot": {
+            "state": 0,
             "limit": 0.5,
             "contol": "Pump_shed1_hot"
         }
