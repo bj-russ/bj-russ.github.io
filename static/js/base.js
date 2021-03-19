@@ -54,9 +54,15 @@ function update_options(variables, options) {
                 variable = "ALARM!";
                 document.getElementById(i).style.backgroundColor = "red";
                 
-            } else {
+            }
+            if (variable == 0 ) {
                 variable = "OK!"
                 document.getElementById(i).style.backgroundColor = "lightgreen";
+            }
+            else{
+                variable = "N/A"
+                document.getElementById(related_ele).style.backgroundColor = "transparent";
+                document.getElementById(i).style.backgroundColor = "transparent";
             }
         }
         if (options[i] == 'warning'){
@@ -65,10 +71,14 @@ function update_options(variables, options) {
                 variable = "Warning!";
                 document.getElementById(i).style.backgroundColor = "gold";
                 document.getElementById(related_ele).style.backgroundColor = "gold";
-            } else {
+            } else if (variable == 0){
                 variable = "In Range!"
                 document.getElementById(related_ele).style.backgroundColor = "lightgreen";
                 document.getElementById(i).style.backgroundColor = "lightgreen";
+            } else {
+                variable = "N/A"
+                document.getElementById(related_ele).style.backgroundColor = "transparent";
+                document.getElementById(i).style.backgroundColor = "transparent";
             }
         }
         updated_variables[i] = variable

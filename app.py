@@ -185,19 +185,16 @@ def background_tasks(queue=Queue):
         t_now = datetime.now()
         read_daq()
         update_calculated_variables()
-        alarm_monitor()  # Alarm monitor needs to be before update_display_variables() for some reason
+        alarm_monitor()  # Alarm monitor needs to be before update_display_variables() for some reason vars_eng is updated in that function?
         update_display_variables()
         
 
 #---------------------- Update SHED operation functions ----------------------------------------------------------------
 
-def update_shed_request(request): # update shed request from webpage
-    #print(request)
+def update_shed_request(request): # update shed request from webpage input
     for key, value in request.items():
         shed_status[key].change_request(value)
         shed_status[key].update_state()
-        print(shed_status[key].state)
-        print(shed_status[key].new_state_output())
         daq.write_channels(shed_status[key].new_state_output())
     if shed_status["SHED1"].state == shed_status["SHED2"].state == shed_status["SHED3"].state == "off":
         daq.write_channels(all_off)
@@ -219,9 +216,16 @@ def update_alarm_limit(request):
 
 def alarm_monitor():
     for key in alarm:
-        alarm[key].update_state(vars_eng[key])
-    # print(alarm['Flowmeter_shed1_cold'].limit_low, vars_eng['Flowmeter_shed1_cold'], alarm['Flowmeter_shed1_cold'].limit_high)    
-    # print(alarm['Flowmeter_shed1_cold'].state)
+        if "Flowmeter_" in key:
+            pump_temp = key.replace("Flowmeter_", "Pump_")
+            pump_related = vars_eng[pump_temp]
+        elif "T_" in key:
+            pump_temp = key.replace("T_", "Pump_")
+            pump_related = vars_eng[pump_temp]
+        else:
+            pump_related = "none"
+        alarm[key].update_state(vars_eng[key], pump_related)
+
     
 def shed_pid(shed_label): #shed_label should be SHED2 or 3 depending which is active
     pid_output = {}
@@ -236,7 +240,7 @@ def setpoint_change(task):
     for key, value in task.items():
         temp_shedvar = key[-5:].upper()
         temp_change = key[-7].lower()
-        print(temp_shedvar, temp_change)
+        #print(temp_shedvar, temp_change)
         if "_T_" in key:
             shed_status[temp_shedvar].set_temp = value
         else:
@@ -256,7 +260,7 @@ def update_display_variables():
     for key in vars_eng.keys():
         if "Flowmeter" in key:
             vars_disp[key] = str(round(float(vars_eng[key]),2)) + " GPM"
-        if "T_shed" in key:
+        if "T_" in key:
              vars_disp[key] = str(round(float(vars_eng[key]), 1)) + ' ' + u'\N{DEGREE SIGN}' + "C"
 
 def deadhead_protection():

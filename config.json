@@ -220,7 +220,17 @@
                     "Valve_shed2_cold": 0,
                     "Door_shed2_seal": 0
                 }            
-            }
+            },
+            "dependent": [
+                "Flowmeter_shed2_hot",
+                "Flowmeter_main_hot",
+                "T_shed2_hot",
+                "T_main_hot",
+                "Flowmeter_shed2_cold",
+                "Flowmeter_main_cold",
+                "T_shed2_cold",
+                "T_main_cold"
+            ]
         },
         "SHED3" : {
             "request" : "off",
@@ -259,7 +269,13 @@
                     "Valve_shed3_cold": 0,
                     "Door_shed3_seal": 0
                 }
-            }
+            },
+            "dependent": [
+                "Flowmeter_shed3_hot",
+                "Flowmeter_main_hot",
+                "T_shed3_hot",
+                "T_main_hot"
+            ]
         }
     },
     "calibration": {

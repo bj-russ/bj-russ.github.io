@@ -11,7 +11,8 @@ class shed():
         self.set_temp = settings['set_temp']
         self.set_temp_high = self.set_temp + 3
         self.set_temp_low = self.set_temp - 3
-        self.pid_state = "off"  
+        self.pid_state = "off" 
+        self.dependent = settings['dependent']  # List of dependent variables required to be alarm free for operation 
         if "PID" in settings:
             self.p = settings["PID"]["p"]
             self.i = settings["PID"]["i"]
@@ -35,6 +36,9 @@ class shed():
         if self.state == "alarm":
             pass # possibly add in fuction to bring up pop up window to clear alarms?
 
+    def state_monitor(self):
+        if self.request =="true":
+            
     def new_state_output(self):
         return self.configs[self.state]
 
@@ -58,7 +62,7 @@ class alarm():
         self.limit_low = settings["limits"]["low"]
         self.active_config = settings["active_config"]
 
-    def update_state(self, reading):
+    def update_state(self, reading, pump_state):
         if "Gas" in self.name:
             if self.state == 0: 
                 if self.type == "inside":
@@ -68,19 +72,26 @@ class alarm():
                 pass # Alarm will not automatically reset!
         
         else:
-            if self.state == 0: 
-                if self.type == "inside":
-                    if float(reading) < float(self.limit_high) and float(reading) > float(self.limit_low):
-                        self.state = 0
-                    else:
-                        self.state = 1
-            elif self.state == 1: ## change this if disabling alarm is required
-                if self.type == "inside":
-                    if float(reading) < float(self.limit_high) and float(reading) > float(self.limit_low):
-                        self.state = 0
-                    else:
-                        self.state = 1
-        
+            #print("pump: ", pump_state)
+            if pump_state == 0:
+                self.state = 2
+            else:
+                if self.state == 1: ## change this if disabling alarm is required
+                    if self.type == "inside":
+                        if float(reading) < float(self.limit_high) and float(reading) > float(self.limit_low):
+                            self.state = 0
+                        else:
+                            self.state = 1
+                else: 
+                    if self.type == "inside":
+                        if float(reading) < float(self.limit_high) and float(reading) > float(self.limit_low):
+                            self.state = 0
+                        else:
+                            self.state = 1
+           
+            
+
+            #print("state: ",self.state)
     def reset(self):
         self.state = 0
 
