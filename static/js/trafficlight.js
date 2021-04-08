@@ -1,12 +1,10 @@
 var lightStates = {red:0,amber:1,green:2};
 var currentState = lightStates.red;
 
-document.getElementById('changeBtn').onclick=function(){
-	changeState();
-};
 
 
-function changeState()
+
+function statusLight()
 {
 	clear();
   switch(currentState)
@@ -30,8 +28,8 @@ function changeState()
    }
 }
 
-function clear(){
-   document.getElementById("red").className ="light off";
-   document.getElementById("amber").className ="light off";
-   document.getElementById("green").className ="light off";
+function clear(shed_rel){
+   document.getElementById(shed_rel + "_red").className ="light off";
+   document.getElementById(shed_rel + "_amber").className ="light off";
+   document.getElementById(shed_rel + "_green").className ="light off";
 }

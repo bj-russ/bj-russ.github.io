@@ -117,37 +117,55 @@
 
   /* For Traffic light */
   .traffic-light
-{
-  width:50px;
-  height:75px;
-  background-color:rgb(228, 228, 228);
+{ 
+  width:100px;
+  height:90px;
+  background-color: transparent;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  /* width: 50%; */
 }
 
 .light
 {
-  width:20px;
-  height:20px;
-  border:1px solid;
+  
+  width:80px;
+  height:30px;
+  border:3px solid;
   margin-left:auto;
   margin-right:auto;
   border-radius: 50px;
 }
 
 .red
-{
-  background-color:red
+{ 
+  transition: background-color 0.2s ease;
+  background-color:red;
+
+  /* transform: translate(-50%, -50%) scale3d(1, 1, 1); */
+  /* transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); */
 }
 .amber
 {
-  background-color:yellow
+  transition: background-color 0.2s ease;
+  background-color:yellow;
+  /* transition: opacity 2s ease-in; */
+  /* transform: translate(-50%, -50%) scale3d(1, 1, 1); */
+  /* transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); */
 }
 .green
 {
+  transition: background-color 0.2s ease;
   background-color:green;
+  /* transition: opacity 2s ease-in; */
+  /* transform: translate(-50%, -50%) scale3d(1, 1, 1); */
+  /* transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); */
 }
 
 .off
 {
+  transition: background-color 0.2s ease;
   background-color:transparent;
  }
 

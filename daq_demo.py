@@ -95,6 +95,7 @@ class dataforth():
                     self.outputs[key] = value
                 else:
                     print("Channel not found")
+                    print(key)
                     pass
 
 

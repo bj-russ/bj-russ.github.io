@@ -144,7 +144,9 @@
                 "on/off": "off",
                 "p": 0,
                 "i": 0,
-                "d": 0
+                "d": 0,
+                "valve_control_hot": "Valve_shed2_hot",
+                "valve_control_cold": "Valve_shed2_cold"
             },
             "state_settings": {
                 "off":{
@@ -171,9 +173,23 @@
                     "Valve_shed1_cold" : 10,
                     "Pump_main_cold" : 1,
                     "Valve_main_cold": 0   
+                },
+                "out_of_range":{
+                    "Exhaust_fan" : 1,
+                    "Pump_shed1_cold" : 1,
+                    "Valve_shed1_cold" : 10,
+                    "Pump_main_cold" : 1,
+                    "Valve_main_cold": 0 
                 }
 
-            }
+            },
+            "dependent": [
+                "Flowmeter_shed1_cold",
+                "Flowmeter_main_cold",
+                "T_shed1_cold",
+                "T_main_cold",
+                "Alarm_shed1"
+            ]
         },
         "SHED2" : {
             "request" : "off",
@@ -185,11 +201,14 @@
             },
             "PID": {
                 "control": "T_shed2",
-                "valve_control": "Valve_shed2_hot",
+                "valve_control_hot": "Valve_shed2_hot",
+                "valve_control_cold": "Valve_shed2_cold",
                 "on/off": false,
-                "p": 0,
-                "i": 0,
-                "d": 0
+                "p": 5,
+                "i": 0.01,
+                "d": 0.1,
+                "pid_limit_low": 0,
+                "pid_limit_high": 10
             },
             "state_settings" : {
                 "off":{
@@ -219,7 +238,19 @@
                     "Pump_shed2_cold": 0,
                     "Valve_shed2_cold": 0,
                     "Door_shed2_seal": 0
-                }            
+                },
+                "out_of_range":{
+                    "Exhaust_fan" : 1,
+                    "Exhaust_shed2": 1,
+                    "Pump_shed2_cold" : 1,
+                    "Valve_shed2_cold" : 10,
+                    "Pump_shed2_hot" : 1,
+                    "Valve_shed2_hot" : 10,
+                    "Pump_main_hot" : 1,
+                    "Valve_main_hot" :  0,
+                    "Pump_main_cold" : 1,
+                    "Valve_main_cold" :  0 
+                }           
             },
             "dependent": [
                 "Flowmeter_shed2_hot",
@@ -229,7 +260,8 @@
                 "Flowmeter_shed2_cold",
                 "Flowmeter_main_cold",
                 "T_shed2_cold",
-                "T_main_cold"
+                "T_main_cold",
+                "Gas_analyzer_shed2"
             ]
         },
         "SHED3" : {
@@ -239,10 +271,13 @@
             "PID": {
                 "on/off": false,
                 "control": "T_shed3",
-                "valve_control": "Valve_shed3_hot",
-                "p": 0,
-                "i": 0,
-                "d": 0
+                "valve_control_hot": "Valve_shed3_hot",
+                "valve_control_cold": "Valve_shed3_cold",
+                "p": 5,
+                "i": 0.01,
+                "d": 0.1,
+                "pid_limit_low": 10,
+                "pid_limit_high": 20
             },
             "state_settings" : {
                 "off":{
@@ -268,13 +303,22 @@
                     "Pump_shed3_cold": 0,
                     "Valve_shed3_cold": 0,
                     "Door_shed3_seal": 0
+                },
+                "out_of_range":{
+                    "Exhaust_fan" : 1,
+                    "Exhaust_shed3": 1,
+                    "Pump_shed3_hot" : 1,
+                    "Valve_shed3_hot" : 10,
+                    "Pump_main_hot" : 1,
+                    "Valve_main_hot" :  0
                 }
             },
             "dependent": [
                 "Flowmeter_shed3_hot",
                 "Flowmeter_main_hot",
                 "T_shed3_hot",
-                "T_main_hot"
+                "T_main_hot",
+                "Gas_analyzer_shed3"
             ]
         }
     },

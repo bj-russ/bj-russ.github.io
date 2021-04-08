@@ -81,6 +81,30 @@ function update_options(variables, options) {
                 document.getElementById(i).style.backgroundColor = "transparent";
             }
         }
+        if (options[i] == "trafficlight"){
+            var shed_rel = i.slice(13);
+            clear(shed_rel)
+            if (variable == "on"){
+                variable = "SHED On"
+                document.getElementById(shed_rel +"_green").className ="light green";
+            }
+            else if (variable == "out_of_range"){
+                variable = "Out of Range"
+                document.getElementById(shed_rel +"_amber").className ="light amber";
+            }
+            else if (variable == "off"){
+                variable = "Off"
+                document.getElementById(shed_rel +"_red").className ="light red";
+            }
+            else if (variable == "alarm"){
+                variable = "ALARM!"
+                document.getElementById(shed_rel +"_red").className ="light red";
+                document.getElementById(shed_rel +"_amber").className ="light amber";
+            }
+            else{
+                clear(shed_rel)
+            }
+        }
         updated_variables[i] = variable
     }
     return updated_variables
@@ -112,6 +136,21 @@ function buttonClicked(variable_id) {
     set_variable_value(variable)                                                    // send new setting to server.
 }
 
+//Button click for alarm reset.
+function buttonAlarm(variable_id){
+    var variable = variable_id .slice(6)
+    $.ajax({                                                    // Ajax request to send data to server
+        type: "GET",
+        url: "_alarm_reset",                             // Route address for changing variable values
+        data: variable,
+        success: function (response) {                            // log to console on successful response
+            console.log(response)
+        },
+    })
+
+}
+
+
 // Initializes options list. Checks for _onOff suffix on tag id, removes from id and stores variable name in option list. For use on update to change 1/0 to on/off. -> call before get_variables
 function check_ID_Options(allIDs) {
     //var allIDs = document.querySelectorAll('[id]');             // get IDs from html
@@ -132,6 +171,11 @@ function check_ID_Options(allIDs) {
             var new_id = id.replace("", "");
             document.getElementById(id).id = new_id;
             options[id] = 'warning';
+        }
+        if (id.includes('trafficlight_')) {
+            var new_id = id.replace("", "");
+            document.getElementById(id).id = new_id;
+            options[id] = 'trafficlight';
         }
     }
     //console.log(options)
@@ -250,4 +294,10 @@ $(document).ready(function () {
     })
 
 })
+// clear function for trafficlight
+function clear(shed_rel){
+    document.getElementById(shed_rel + "_red").className ="light off";
+    document.getElementById(shed_rel + "_amber").className ="light off";
+    document.getElementById(shed_rel + "_green").className ="light off";
+ }
 

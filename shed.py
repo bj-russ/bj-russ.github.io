@@ -1,10 +1,11 @@
 from simple_pid import PID
 
+
 class shed():
 
     def __init__(self, name, settings):
         self.settings = settings
-        self.request = "false"
+        self.request = False
         self.name = name
         self.state = "off"
         self.configs = settings['state_settings'] # ['on'], ['off'], ['alarm']
@@ -18,12 +19,15 @@ class shed():
             self.i = settings["PID"]["i"]
             self.d = settings["PID"]["d"]
             self.pid = PID(self.p, self.i, self.d, self.set_temp)
-            self.pid_valve = settings["PID"]["valve_control"]
+            self.pid_valve_hot = settings["PID"]["valve_control_hot"]
+            self.pid_valve_cold = settings["PID"]["valve_control_cold"]
             self.pid_control = settings["PID"]["control"]
             self.pid_state = False
+            self.pid.output_limits = (0,10)
 
     def change_request(self, value):
         self.request = value
+        print (self.request)
         self.update_state()
 
 
@@ -36,22 +40,61 @@ class shed():
         if self.state == "alarm":
             pass # possibly add in fuction to bring up pop up window to clear alarms?
 
-    def state_monitor(self):
-        if self.request =="true":
-            
+    def state_monitor(self, active_alarm):
+        count = 0
+        if self.request == True or self.request == "true":
+            print(self.dependent)
+            print(active_alarm)
+            for item in self.dependent:
+                if "Gas" not in item:
+                    if item in active_alarm:
+                        count =+ 1 
+                    else:
+                        pass 
+                else:
+                    if item in active_alarm:
+                        count =+ 100
+                    else:
+                        pass
+            #print(count)
+            if count > 100:
+                self.state = "alarm"
+            elif count > 0:
+                self.state = "out_of_range"
+            elif count == 0:
+                self.state = "on"
+            else:
+                self.state ="ERROR!"
+
+        else:
+            self.state = "off"
+        #print(self.name, "state: ", self.state)
+                
+                
+
     def new_state_output(self):
         return self.configs[self.state]
 
     def change_set_temp(self, temp_set):
-        self.set_temp = temp_set
+        self.set_temp = float(temp_set)
     
     def change_pid(self, newset):
         self.pid_state = newset
         
 
     def pid_func(self, SHED_temp_current):
-        self.pid.setpoint = self.set_temp
-        return self.pid(SHED_temp_current)
+        output = {}
+        print(self.pid_state)
+        if self.pid_state == True or self.pid_state == "true" or self.pid_state == "True":
+            self.pid.setpoint = float(self.set_temp)
+            valve_temp = self.pid(float(SHED_temp_current))
+            print(valve_temp)
+            output[self.pid_valve_hot] = valve_temp 
+            print(self.set_temp, SHED_temp_current)
+            print(output)
+        return output
+            
+
 class alarm():
     def __init__(self, name, settings):
         self.settings = settings

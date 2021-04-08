@@ -29,6 +29,20 @@
                     <td id="alarm_Gas_analyzer_shed2">THC alarm2</td>
                     <td id="alarm_Gas_analyzer_shed3">THC alarm3</td>
                 </tr>
+                <tr>
+                    <td>
+                        <button type="button" onclick="buttonAlarm('alarm_Alarm_shed1')" id="alarm_Alarm_shed1">Alarm
+                            Reset</button>
+                    </td>
+                    <td>
+                        <button type="button" onclick="buttonAlarm('alarm_Gas_analyzer_shed2')" id="alarm_Gas_analyzer_shed2">Alarm
+                            Reset</button>
+                    </td>
+                    <td>
+                        <button type="button" onclick="buttonAlarm('alarm_Gas_analyzer_shed3')" id="alarm_Gas_analyzer_shed3">Alarm
+                            Reset</button>
+                    </td>
+                </tr>
 
                 <tr>
                     <td></td>
@@ -228,10 +242,29 @@
         <div class="column">
             <!--  SHED 1 Control and Monitoring-->
             <div class="inputgroup">
-                <input id="input_SHED1" name="input_SHED1" type="checkbox" />
-                <label for="input_SHED1">SHED1 on/off</label>
+                <input id="input_SHED1_request" name="input_SHED1_request" type="checkbox" />
+                <label for="input_SHED1_request">SHED1 on/off</label>
             </div>
-            <br>
+
+            <table width="100%">
+                <tr>
+                    <div class="traffic-light" style="height: 3px">
+                        <td>
+                            <div class="light off" id="shed1_red"></div>
+                        </td>
+                        <td>
+                            <div class="light off" id="shed1_amber"></div>
+                        </td>
+                        <td>
+                            <div class="light off" id="shed1_green"></div>
+                        </td>
+                    </div>
+                </tr>
+                <tr>
+                    <td colspan="3" id="trafficlight_shed1">0</td>
+                </tr>
+    
+            </table>
 
             <table>
 
@@ -370,21 +403,22 @@
         <div class="column">
             <!--  SHED 2 Control and Monitoring-->
             <div class="inputgroup">
-                <input id="input_SHED2" name="input_SHED2" type="checkbox" />
-                <label for="input_SHED2">SHED2 on/off</label>
+                <input id="input_SHED2_request" name="input_SHED2_request" type="checkbox" />
+                <label for="input_SHED2_request">SHED2 on/off</label>
             </div>
             <table width="100%">
                 <tr>
                     <td colspan="4">
                         <div class="t1" id="T_shed2">0</div>
                     </td>
+
                     <td>
                         <div class="traffic-light">
-                            <div class="light off" id="red"></div>
-                            <div class="light off" id="amber"></div>
-                            <div class="light off" id="green"></div>
+                            <div class="light off" id="shed2_red"></div>
+                            <div class="light off" id="shed2_amber"></div>
+                            <div class="light off" id="shed2_green"></div>
                         </div>
-                        <button id="changeBtn">Change</button>
+                        <div id="trafficlight_shed2"></div>
 
                     </td>
                 </tr>
@@ -392,7 +426,7 @@
                     <th colspan="2">PID control Settings</th>
                     <td colspan="3">
                         <label for="input_setpoint_T_shed2">SHED2 Temperature Setpoint:</label>
-                        <input type="number" id="input_setpoint_T_shed2" min="0" max="100" value={{ shed.SHED2.set_temp
+                        <input type="number" id="input_setpoint_T_shed2" min="0" max="1000" value={{ shed.SHED2.set_temp
                             }}>
                     </td>
                 </tr>
@@ -558,10 +592,56 @@
         <div class="column">
             <!--  SHED 3 Control and Monitoring-->
             <div class="inputgroup">
-                <input id="input_SHED3" name="input_SHED3" type="checkbox" />
-                <label for="input_SHED3">SHED3 on/off</label>
+                <input id="input_SHED3_request" name="input_SHED3_request" type="checkbox" />
+                <label for="input_SHED3_request">SHED3 on/off</label>
             </div>
-            <div class="t1" id="T_shed3">0</div>
+            <table width="100%">
+                <tr>
+                    <td colspan="4">
+                        <div class="t1" id="T_shed3">0</div>
+                    </td>
+
+                    <td>
+                        <div class="traffic-light">
+                            <div class="light off" id="shed3_red"></div>
+                            <div class="light off" id="shed3_amber"></div>
+                            <div class="light off" id="shed3_green"></div>
+                        </div>
+                        <div id="trafficlight_shed3"></div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <th colspan="2">PID control Settings</th>
+                    <td colspan="3">
+                        <label for="input_setpoint_T_shed3">SHED3 Temperature Setpoint:</label>
+                        <input type="number" id="input_setpoint_T_shed3" min="0" max="1000" value={{ shed.SHED3.set_temp
+                            }}>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="button" onclick="buttonClicked('pid_shed3')" id="input_pid_shed3">Shed 2 PID
+                            control</button>
+                    </td>
+                    <td id="pid_shed3_onOff">PID on/off notification</td>
+                    <td>
+                        <label for="input_setpoint_P_shed3">P:</label>
+                        <input type="number" id="input_setpoint_P_shed3" min="0" max="100" step=".1" value={{
+                            shed.SHED3.p}}>
+                    </td>
+                    <td>
+                        <label for="input_setpoint_I_shed3">I:</label>
+                        <input type="number" id="input_setpoint_I_shed3" min="0" max="100" step=".1" value={{
+                            shed.SHED3.i}}>
+                    </td>
+                    <td>
+                        <label for="input_setpoint_D_shed3">D:</label>
+                        <input type="number" id="input_setpoint_D_shed3" min="0" max="100" step=".1" value={{
+                            shed.SHED3.d}}>
+                    </td>
+                </tr>
+            </table>
             <table>
 
                 <tr>

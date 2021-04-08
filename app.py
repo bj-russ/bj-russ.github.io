@@ -102,7 +102,7 @@ def update_page_data():
     for variable in variables_requested:
         if variable in vars_disp.keys():
             data[variable] = vars_disp[variable]
-        elif "SHED" in variable:
+        elif "SHED_request" in variable:
             print(variable, shed_status[variable].request)
             data[variable] = shed_status[variable].request
         elif "alarm_" in variable:
@@ -115,7 +115,20 @@ def update_page_data():
             temp_shedvar = variable[4:].upper()
             data[variable] = shed_status[temp_shedvar].pid_state
             #print(data)
+        elif "trafficlight_" in variable:
+            temp_statevar = variable[13:].upper()
+            data[variable]= shed_status[temp_statevar].state
     return jsonify(ajax_data=data)
+
+@app.route("/_alarm_reset")
+def alarm_reset():
+    alarm_to_reset_dict = request.args
+    alarm_to_reset = list(alarm_to_reset_dict.keys())[0]
+    alarm[alarm_to_reset].reset
+
+    print(str(alarm_to_reset) + ": Reset to state = " + str(alarm[alarm_to_reset].state))
+    return jsonify(ajax_response="Reset Alarm: " + str(alarm_to_reset) + ". state is now 0")
+
 
 @app.route('/_set_variable_value')                                 #Accepts requested control variable from user and sends values to background task.
 def set_variable_value():
@@ -123,7 +136,7 @@ def set_variable_value():
     variable = list(request.args.to_dict().keys())
     variable_name = variable[0]
     print("Received request to update setting: " + variable_name + " to new value: " + variable_to_set[variable_name])
-    if "SHED" in variable_name:
+    if "_request" in variable_name:
         queue.put({"update_shed_request": variable_to_set})
     elif "high_" in variable_name or "low_" in variable_name:
         queue.put({"limit_set_request": variable_to_set})
@@ -186,16 +199,19 @@ def background_tasks(queue=Queue):
         read_daq()
         update_calculated_variables()
         alarm_monitor()  # Alarm monitor needs to be before update_display_variables() for some reason vars_eng is updated in that function?
+        shed_pid()
         update_display_variables()
         
 
 #---------------------- Update SHED operation functions ----------------------------------------------------------------
 
 def update_shed_request(request): # update shed request from webpage input
+    
     for key, value in request.items():
-        shed_status[key].change_request(value)
-        shed_status[key].update_state()
-        daq.write_channels(shed_status[key].new_state_output())
+        key_fixed = key[:5]
+        shed_status[key_fixed].change_request(value)
+        shed_status[key_fixed].update_state()
+        daq.write_channels(shed_status[key_fixed].new_state_output())
     if shed_status["SHED1"].state == shed_status["SHED2"].state == shed_status["SHED3"].state == "off":
         daq.write_channels(all_off)
     
@@ -215,6 +231,7 @@ def update_alarm_limit(request):
 
 
 def alarm_monitor():
+    active_alarm = []
     for key in alarm:
         if "Flowmeter_" in key:
             pump_temp = key.replace("Flowmeter_", "Pump_")
@@ -225,11 +242,24 @@ def alarm_monitor():
         else:
             pump_related = "none"
         alarm[key].update_state(vars_eng[key], pump_related)
+        
+        if alarm[key].state == 1:
+            active_alarm.append(key)
+            #print(active_alarm)
+    for key in shed_status:
+        shed_status[key].state_monitor(active_alarm)
 
     
-def shed_pid(shed_label): #shed_label should be SHED2 or 3 depending which is active
+def shed_pid(): #shed_label should be SHED2 or 3 depending which is active
     pid_output = {}
-    pid_output[shed_status[shed_label].pid_valve] = shed_status[shed_label].pid_func(vars_eng[shed_status[shed_label].pid_control])
+    for shed_label in shed_status.keys():       
+        pid_output = shed_status[shed_label].pid_func(float(vars_eng[shed_status[shed_label].pid_control]))
+
+    if hasattr(pid_output, 'keys'):
+        #print(pid_output)
+        daq.write_channels(pid_output)
+ 
+
 
 def pid_onoff(pid_shed):
     for key, value in pid_shed.items():
