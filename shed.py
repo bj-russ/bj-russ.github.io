@@ -27,7 +27,7 @@ class shed():
 
     def change_request(self, value):
         self.request = value
-        print (self.request)
+        # print (self.request)
         self.update_state()
 
 
@@ -43,8 +43,8 @@ class shed():
     def state_monitor(self, active_alarm):
         count = 0
         if self.request == True or self.request == "true":
-            print(self.dependent)
-            print(active_alarm)
+            # print(self.dependent)
+            # print(active_alarm)
             for item in self.dependent:
                 if "Gas" not in item:
                     if item in active_alarm:
@@ -84,7 +84,7 @@ class shed():
 
     def pid_func(self, SHED_temp_current):
         output = {}
-        print(self.pid_state)
+        # print(self.pid_state)
         if self.pid_state == True or self.pid_state == "true" or self.pid_state == "True":
             self.pid.setpoint = float(self.set_temp)
             valve_temp = self.pid(float(SHED_temp_current))

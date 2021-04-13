@@ -16,14 +16,15 @@ from waitress import serve      # Production server for windows applications
 #import gunicorn                # Production server for linux applications
 import auxiliary_calculations
 import shed
+import db_save
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 app.config['DEBUG'] = True
-# app.config['AQLALCHEMY_DATABASE_URI'] = 'sqlite:///myDB.db'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False #to supress warning
-# db = SQLAlchemy(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shedDB.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False #to supress warning
+db = SQLAlchemy(app)
 #socketio = SocketIO(app)       # If using sockets. Binds SocketIO to app
 
 #----------------- Load settings from config file, initiate daq -------------------------------------------------------
@@ -201,6 +202,7 @@ def background_tasks(queue=Queue):
         alarm_monitor()  # Alarm monitor needs to be before update_display_variables() for some reason vars_eng is updated in that function?
         shed_pid()
         update_display_variables()
+        db_save.save_data(vars_raw)
         
 
 #---------------------- Update SHED operation functions ----------------------------------------------------------------
