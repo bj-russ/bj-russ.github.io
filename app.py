@@ -25,7 +25,8 @@ app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shedDB.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False #to supress warning
 db = SQLAlchemy(app)
-#socketio = SocketIO(app)       # If using sockets. Binds SocketIO to app
+
+socketio = SocketIO(app)       # If using sockets. Binds SocketIO to app
 
 #----------------- Load settings from config file, initiate daq -------------------------------------------------------
 
@@ -94,6 +95,8 @@ def all_control():
     #print(alarm["Gas_analyzer_shed2"].limit_low)
     return render_template('all_control.html', vars_eng = vars_disp, limits = alarm, shed=shed_status)
 
+
+
 #------------------- Data routes used by JQuery ------------------------------------------------------------------------
 
 @app.route('/_update_page_variables')                            #Accepts variables list from js and returns current values. 
@@ -148,12 +151,29 @@ def set_variable_value():
     else:
         queue.put({"write_channels": variable_to_set})
 
+    db_save.save_data(vars_raw, vars_eng) # saves to dataset whenever a button is pressed.
     return jsonify(ajax_response="Received variable -> value: " + str(variable_name) + " -> " + str(variable_to_set[variable_name]))
 
 @app.route('/_maq20_fetch_data')                            #Used for maq20_overview.html - not super useful outside of an overview
 def maq20_fetch_data():
     data = daq.read_modules(daq.modules)
     return jsonify(ajax_data=data)
+
+@app.route('/_initialize_data') # initialize data on page reload for each plot. 
+def initialize_data():
+    records = db_save.EngData.query.order_by(db_save.EngData.timestamp.desc()).limit(1440).all()
+    y_vals = []
+    valve3_vals = []
+    time_vals = []
+    for entry in records:
+        y_vals.append(entry.T_shed3)
+        time_vals.append(entry.time)
+        valve3_vals.append(entry.Valve_shed3_hot)
+    y_vals.reverse()
+    time_vals.reverse()
+    valve3_vals.reverse()
+    print("time values are: ",time_vals)
+    return jsonify(time=time_vals, T_shed3=y_vals, Valve_shed3_hot=valve3_vals)
 
 #--------------------- Regular functions - Can be used by routes, background thread etc. --------------------------------------------------------
 
@@ -197,13 +217,36 @@ def background_tasks(queue=Queue):
             sleep(0.01)
         t_next = t_next + timedelta(seconds=1)              # runs every 1 second (Slower tasks, reading daq etc)
         t_now = datetime.now()
+        ##### Scheduled tasks for background ###
         read_daq()
         update_calculated_variables()
         alarm_monitor()  # Alarm monitor needs to be before update_display_variables() for some reason vars_eng is updated in that function?
         shed_pid()
         update_display_variables()
-        db_save.save_data(vars_raw)
         
+        
+def dataHandler():
+    ## Responsible for saving data to database and send data through the socket to be used in plots
+    sleep(10)
+    print("Background database save thread started")
+    #t_now = datetime.now()
+    #t_next = t_now + timedelta(seconds=5)
+    while True:
+        # while t_now < t_next:
+        #     t_now = datetime.now()
+        #     sleep(0.5)
+        
+                     # runs every 1 second (Slower tasks, reading daq etc)
+        #t_now = datetime.now()
+        ##### Scheduled tasks for background ###
+        db_save.save_data(vars_raw, vars_eng)
+        records = vars_eng #db_save.EngData.query.order_by(db_save.EngData.timestamp.desc()).limit(1).all()
+        #records['time'] = t_now.strftime("%H:%M:%S")
+        # print(records)
+        print("SOCKET")
+        socketio.emit('newchartdata3', {'T_shed3':records['T_shed3'], 'Valve_shed3_hot': records['Valve_shed3_hot'], 'time':records['time']}, namespace='/test')
+        #t_next = t_next + timedelta(seconds=5) 
+        socketio.sleep(5)
 
 #---------------------- Update SHED operation functions ----------------------------------------------------------------
 
@@ -291,9 +334,9 @@ def update_display_variables():
 
     for key in vars_eng.keys():
         if "Flowmeter" in key:
-            vars_disp[key] = str(round(float(vars_eng[key]),2)) + " GPM"
+            vars_disp[key] = str(round(float(vars_eng[key]),2))# + " GPM"
         if "T_" in key:
-             vars_disp[key] = str(round(float(vars_eng[key]), 1)) + ' ' + u'\N{DEGREE SIGN}' + "C"
+             vars_disp[key] = str(round(float(vars_eng[key]), 1))# + ' ' + u'\N{DEGREE SIGN}' + "C"
 
 def deadhead_protection():
     pass
@@ -304,11 +347,19 @@ def deadhead_protection():
 daq.write_channels(all_off)
 queue = Queue()
 background = Thread(target=background_tasks, args=(queue,))
+background2 =  Thread(target=dataHandler)
 background.daemon = True
-background.start()
+background2.daemon = True
+
+
+
 
 #-------------------- Start flask app on wsgi server -------------------------------------------------------------------
 
 if __name__ == '__main__':
+    
     #socketio.run(app, host='0.0.0.0')  # used for eventlet with socketio
-    serve(app, port=5000)               # used for waitress, without sockets
+    background.start()
+    background2.start()
+    socketio.run(app, host='0.0.0.0', use_reloader=False) #This requires chosing the correct http or https version of socket io in the .js.
+    #serve(app, port=5000)               # used for waitress, without sockets

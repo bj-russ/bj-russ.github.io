@@ -41,7 +41,7 @@ function update_options(variables, options) {
         variable = variables[i]
         if (i in options) {                              // check if variable has option
             if (options[i] == 'onOff') {                  // check if option is onOff and replace 1/0 with On/Off
-                if (variable == 1 || variable == true || variable == 'true' || variable == 'True' || variable == "on" || variable == "On" || variable  == "ON") {
+                if (variable == 1 || variable == true || variable == 'true' || variable == 'True' || variable == "on" || variable == "On" || variable == "ON") {
                     variable = 'On';
                 } else {
                     variable = 'Off';
@@ -53,25 +53,25 @@ function update_options(variables, options) {
             if (variable == 1) {
                 variable = "ALARM!";
                 document.getElementById(i).style.backgroundColor = "red";
-                
+
             }
-            if (variable == 0 ) {
+            if (variable == 0) {
                 variable = "OK!"
                 document.getElementById(i).style.backgroundColor = "lightgreen";
             }
-            else{
+            else {
                 variable = "N/A"
                 document.getElementById(related_ele).style.backgroundColor = "transparent";
                 document.getElementById(i).style.backgroundColor = "transparent";
             }
         }
-        if (options[i] == 'warning'){
+        if (options[i] == 'warning') {
             var related_ele = i.slice(8); // get related element for setting up background coloour of element
             if (variable == 1) {
                 variable = "Warning!";
                 document.getElementById(i).style.backgroundColor = "gold";
                 document.getElementById(related_ele).style.backgroundColor = "gold";
-            } else if (variable == 0){
+            } else if (variable == 0) {
                 variable = "In Range!"
                 document.getElementById(related_ele).style.backgroundColor = "lightgreen";
                 document.getElementById(i).style.backgroundColor = "lightgreen";
@@ -81,29 +81,36 @@ function update_options(variables, options) {
                 document.getElementById(i).style.backgroundColor = "transparent";
             }
         }
-        if (options[i] == "trafficlight"){
+        if (options[i] == "trafficlight") {
             var shed_rel = i.slice(13);
             clear(shed_rel)
-            if (variable == "on"){
+            if (variable == "on") {
                 variable = "SHED On"
-                document.getElementById(shed_rel +"_green").className ="light green";
+                document.getElementById(shed_rel + "_green").className = "light green";
             }
-            else if (variable == "out_of_range"){
+            else if (variable == "out_of_range") {
                 variable = "Out of Range"
-                document.getElementById(shed_rel +"_amber").className ="light amber";
+                document.getElementById(shed_rel + "_amber").className = "light amber";
             }
-            else if (variable == "off"){
+            else if (variable == "off") {
                 variable = "Off"
-                document.getElementById(shed_rel +"_red").className ="light red";
+                document.getElementById(shed_rel + "_red").className = "light red";
             }
-            else if (variable == "alarm"){
+            else if (variable == "alarm") {
                 variable = "ALARM!"
-                document.getElementById(shed_rel +"_red").className ="light red";
-                document.getElementById(shed_rel +"_amber").className ="light amber";
+                document.getElementById(shed_rel + "_red").className = "light red";
+                document.getElementById(shed_rel + "_amber").className = "light amber";
             }
-            else{
+            else {
                 clear(shed_rel)
             }
+        }
+        if (options[i] == "TEMPERATURE") {
+            variable = String(variable) + " &degC";
+        }
+        if (options[i] == "GPM") {
+
+            variable = String(variable) + " GPM";
         }
         updated_variables[i] = variable
     }
@@ -126,7 +133,7 @@ function set_variable_value(variable_to_set) {
 function buttonClicked(variable_id) {
     var variable_value_current = $('#' + variable_id).text(); // text is used for getting the html string between the tag brackets. Val works on input boxes.
     var variable_value_new = 0
-    if ((variable_value_current == 0) || (variable_value_current == 'Off') || variable_value_current == 'false' || variable_value_current == 'off' || variable_value_current == false ){       // check the current state and update with new value, case added for onOff option
+    if ((variable_value_current == 0) || (variable_value_current == 'Off') || variable_value_current == 'false' || variable_value_current == 'off' || variable_value_current == false) {       // check the current state and update with new value, case added for onOff option
         variable_value_new = true
     } else {
         variable_value_new = false
@@ -137,8 +144,8 @@ function buttonClicked(variable_id) {
 }
 
 //Button click for alarm reset.
-function buttonAlarm(variable_id){
-    var variable = variable_id .slice(6)
+function buttonAlarm(variable_id) {
+    var variable = variable_id.slice(6)
     $.ajax({                                                    // Ajax request to send data to server
         type: "GET",
         url: "_alarm_reset",                             // Route address for changing variable values
@@ -176,6 +183,18 @@ function check_ID_Options(allIDs) {
             var new_id = id.replace("", "");
             document.getElementById(id).id = new_id;
             options[id] = 'trafficlight';
+        }
+        if (!id.includes("warning_") & !id.includes("_onOff") && !id.includes('alarm_')) {
+            if (id.includes("Flowmeter")) {
+                var new_id = id.replace("", "");
+                document.getElementById(id).id = new_id;
+                options[id] = 'GPM';
+            }
+            if (id.includes("T_")) {
+                var new_id = id.replace("", "");
+                document.getElementById(id).id = new_id;
+                options[id] = 'TEMPERATURE';
+            }
         }
     }
     //console.log(options)
@@ -254,6 +273,13 @@ function initialize_input_values(Inputs, options) {
 
 }
 
+// clear function for trafficlight
+function clear(shed_rel) {
+    document.getElementById(shed_rel + "_red").className = "light off";
+    document.getElementById(shed_rel + "_amber").className = "light off";
+    document.getElementById(shed_rel + "_green").className = "light off";
+}
+
 
 //Runs once the document is ready and published in the browser.
 $(document).ready(function () {
@@ -265,6 +291,11 @@ $(document).ready(function () {
         }
     });
 
+     //This is used for https transfers when deployed to online server
+    // var socket = io.connect('https://' + document.domain + ':' + location.port + '/test', {secure: true});
+
+    //This is used for http transfers when deployed to local network
+    var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
 
     // get list of variables used by page (tags which have and id="")
     var variables_options = get_variables()                         // Get page variables and their associated options
@@ -292,12 +323,124 @@ $(document).ready(function () {
         }
         set_variable_value(input_changed)                           // send new value to server
     })
+    //connect the socket to the server.
 
+    //This is used for https transfers when deployed to online server
+
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: [],
+        options: {
+            title: {
+                display: true,
+                text: "SHED3 Temperature Record",
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true,
+                        suggestedMax: 500,
+                        fontColor: '#c45850'
+                    },
+                    id: 'A',
+                    type: 'linear',
+                    position: 'left',
+                    scaleLabel: {
+                        labelString: 'Temperature [C]',
+                        display: true
+                    }
+                }, {
+                    ticks: {
+                        beginAtZero: true,
+                        suggestedMax: 15,
+                        fontColor: "#3e95cd"
+                    },
+                    id: 'B',
+                    type: 'linear',
+                    position: 'right',
+                    scaleLabel: {
+                        labelString: 'Valve Voltage [v]',
+                        display: true
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        maxTicksLimit: 24,
+                        maxRotation: 45,
+                        minRotation: 45
+                    },
+                    scaleLabel: {
+                        labelString: 'Time of day',
+                        display: true
+                    }
+                }]
+            },
+            elements: {
+                point: {
+                    radius: 0
+                }
+            }
+        }
+    });
+    //Update charge with data from server once received from ajax call
+    function successinitialized(myChart, record_data) {
+        myChart.data = {
+            labels: record_data.time,
+            datasets: [{
+                data: record_data.T_shed3,
+                label: "Temperature [C]",
+                borderColor: "#c45850",
+                fill: false,
+                yAxisID: 'A'
+            }, {
+                data: record_data.Valve_shed3_hot,
+                label: "Valve [v]",
+                borderColor: "#3e95cd",
+                fill: false,
+                yAxisID: 'B'
+            }]
+        }
+        myChart.update();
+        return myChart;
+    };
+    //asynchronous call to server for unitial chart data
+    function initializedata(myChart) {
+        $.ajax({
+            url: "_initialize_data",
+            type: "GET",
+            success: function (response) {
+                var temp_data = response.T_shed3;
+                var valve_data = response.Valve_shed3_hot;
+                var time_data = response.time;
+                var record_data = { T_shed3: temp_data, Valve_shed3_hot: valve_data, time: time_data };
+                successinitialized(myChart, record_data); //update chart with data
+            }
+        });
+    };
+
+    //initiate the data retrieval process
+    initializedata(myChart);
+
+    //socket.io tasks to be performed when messages are received from the server.
+
+    socket.on("newchartdata3", function(msg) {
+        var new_data = [msg.T_shed3, msg.Valve_shed3_hot, msg.time]
+        var time_stamp = new_data.pop(2)
+        console.log("Received Chart Data :" + new_data + " with time stamp: " + time_stamp);
+        //remove oldest once chart is 24hrs
+        if (myChart.data.labels.length >= 60) {
+            myChart.data.labels.shift();
+            myChart.data.datasets.forEach((dataset) => {
+                dataset.data.shift();
+            })
+        }
+        myChart.data.labels.push(time_stamp);
+        myChart.data.datasets.forEach((dataset, index) => {
+            dataset.data.push(new_data[index]);
+        })
+        myChart.update();
+    });
 })
-// clear function for trafficlight
-function clear(shed_rel){
-    document.getElementById(shed_rel + "_red").className ="light off";
-    document.getElementById(shed_rel + "_amber").className ="light off";
-    document.getElementById(shed_rel + "_green").className ="light off";
- }
+
 
