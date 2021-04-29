@@ -15,6 +15,7 @@ conn.close()
 class RawData(db.Model):  # add columns for data model here
     id = db.Column(db.Integer, primary_key=True)  # primary key column if needed
     timestamp = db.Column(db.DateTime, index=True, primary_key=False, unique=True)  # timestamp
+    chart_time = db.Column(db.String, index=True, unique=False)
     year = db.Column(db.Integer, index = True, unique = False)
     month = db.Column(db.Integer, index = True, unique = False)
     day = db.Column(db.Integer, index = True, unique = False)
@@ -75,6 +76,7 @@ class RawData(db.Model):  # add columns for data model here
 class EngData(db.Model):  # add columns for data model here
     id = db.Column(db.Integer, primary_key=True)  # primary key column if needed
     timestamp = db.Column(db.DateTime, index=True, primary_key=False, unique=True)  # timestamp
+    chart_time = db.Column(db.String, index=True, unique=False)
     year = db.Column(db.Integer, index = True, unique = False)
     month = db.Column(db.Integer, index = True, unique = False)
     day = db.Column(db.Integer, index = True, unique = False)
@@ -136,23 +138,26 @@ class EngData(db.Model):  # add columns for data model here
 
 def save_data(raw_dictionary, eng_dictionary):
     # raw_dictionary = raw_dictionary
-    timestamp = datetime.now()
-    year = timestamp.year
-    month = timestamp.month
-    day = timestamp.day
-    time = timestamp.strftime("%H:%M:%S")
-    raw_dictionary = raw_dictionary
-    eng_dictionary = eng_dictionary
-    raw_dictionary["timestamp"] = timestamp
-    raw_dictionary["year"] = year
-    raw_dictionary["month"] = month
-    raw_dictionary["day"] = day
-    raw_dictionary["time"] = time
-    eng_dictionary["timestamp"] = timestamp
-    eng_dictionary["year"] = year
-    eng_dictionary["month"] = month
-    eng_dictionary["day"] = day
-    eng_dictionary["time"] = time
+    # timestamp = datetime.now()
+    # year = timestamp.year
+    # month = timestamp.month
+    # day = timestamp.day
+    # time = timestamp.strftime("%H:%M:%S")
+    # chart_time = timestamp.strftime("%m/%d %H:%M")
+    # raw_dictionary = raw_dictionary
+    # eng_dictionary = eng_dictionary
+    # raw_dictionary["chart_time"] = chart_time
+    # raw_dictionary["timestamp"] = timestamp
+    # raw_dictionary["year"] = year
+    # raw_dictionary["month"] = month
+    # raw_dictionary["day"] = day
+    # raw_dictionary["time"] = time
+    # eng_dictionary["chart_time"] = chart_time
+    # eng_dictionary["timestamp"] = timestamp
+    # eng_dictionary["year"] = year
+    # eng_dictionary["month"] = month
+    # eng_dictionary["day"] = day
+    # eng_dictionary["time"] = time
     # raw_dict = {raw_ + str(key):val for key,val in raw_dictionary.items()} #add prefix "raw_" to dictionary to separate from other dicts
     raw_dict = {}
     eng_dict= {}

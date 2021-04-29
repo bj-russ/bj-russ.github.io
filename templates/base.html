@@ -9,7 +9,7 @@
     <script src="static/js/socket.io.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/styles/style.css">
     <link rel="stylesheet" type="text/css" href="/static/styles/checkbox1.css">
-    <script type="text/javascript" src="/static/js/loader.js"></script>
+    <script type="text/javascript" src="/static/js/loader.js" src="/static/js/new_chart.js"></script>
     
     <script type=text/javascript>
         $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
@@ -19,9 +19,10 @@
 <div class="topnav">
     <a href="#home">Home</a>
     <a href="maq20_overview.html">MAQ 20</a>
-    <a href="permeation.html">Permeation Testing</a>
-    <a href="health">All Health</a>
-    <a href="all_control">Manual Control</a>
+    <!-- <a href="permeation.html">Permeation Testing</a> -->
+    <a href="SHED3">SHED3 Permeation Testing</a>
+    <!-- <a href="health">All Health</a> -->
+    <a href="all_control">All System Control</a>
     <a href="#about">About</a>
     
   </div>

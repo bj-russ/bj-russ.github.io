@@ -1,5 +1,3 @@
-
-//Get current values from server and update display. Activated at interval as set in document.ready function. Passing true to update_controls allows the front end to be synchronized with the server, or to update during auto control modes.
 function update_page_variables(variables_to_update, options, update_controls = false) {
     var variables_to_update_dict = {};
     for (var index = 0; index < variables_to_update.length; index++) {  // build dict object of {name: value}, to send to server. (Here, value = name)
@@ -332,7 +330,7 @@ $(document).ready(function () {
     //This is used for https transfers when deployed to online server
 
     var ctx3 = document.getElementById('myChart_shed3').getContext('2d');
-    var ctx2 = document.getElementById('myChart_shed2').getContext('2d');
+    
     var myChart_shed3 = new Chart(ctx3, {
         type: 'line',
         data: [],
@@ -388,61 +386,7 @@ $(document).ready(function () {
             }
         }
     });
-    var myChart_shed2 = new Chart(ctx2, {
-        type: 'line',
-        data: [],
-        options: {
-            title: {
-                display: true,
-                text: "SHED2 Temperature Record",
-            },
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        suggestedMax: 500,
-                        fontColor: '#c45850'
-                    },
-                    id: 'A',
-                    type: 'linear',
-                    position: 'left',
-                    scaleLabel: {
-                        labelString: 'Temperature [C]',
-                        display: true
-                    }
-                }, {
-                    ticks: {
-                        beginAtZero: true,
-                        suggestedMax: 15,
-                        fontColor: "#3e95cd"
-                    },
-                    id: 'B',
-                    type: 'linear',
-                    position: 'right',
-                    scaleLabel: {
-                        labelString: 'Valve Voltage [v]',
-                        display: true
-                    }
-                }],
-                xAxes: [{
-                    ticks: {
-                        maxTicksLimit: 15,
-                        maxRotation: 45,
-                        minRotation: 30
-                    },
-                    scaleLabel: {
-                        labelString: 'Date and Time',
-                        display: true
-                    }
-                }]
-            },
-            elements: {
-                point: {
-                    radius: 0
-                }
-            }
-        }
-    });
+    
     //Update charge with data from server once received from ajax call
     function successinitialized(myChart, record_data) {
         myChart.data = {
@@ -479,26 +423,13 @@ $(document).ready(function () {
             }
         });
     };
-    function initializedata_shed2(myChart) {
-        $.ajax({
-            url: "_initialize_data",
-            type: "GET",
-            success: function (response) {
-                var temp_data = response.T_shed2;
-                var valve_data = response.Valve_shed2_cold;
-                var time_data = response.time;
-                var record_data = { temp: temp_data, valve: valve_data, time: time_data };
-                successinitialized(myChart, record_data); //update chart with data
 
-            }
-        });
-    };
 
     //initiate the data retrieval process
-    initializedata_shed2(myChart_shed2);
+
     initializedata_shed3(myChart_shed3);
     setInterval(update_chart_shed3, 5000, myChart_shed3)  //300000 is updated every 5 minutes
-    setInterval(update_chart_shed2, 1000, myChart_shed2)
+    
     //update chart with data received.
     function update_chart_shed3(myChart) {
         $.ajax({
@@ -531,54 +462,8 @@ $(document).ready(function () {
         
 
     };
-    function update_chart_shed2(myChart) {
-        $.ajax({
-            url: "_update_data",
-            type: "GET",
-            success: function (response) {
-                var temp_data = response.data.T_shed2;
-                var valve_data = response.data.Valve_shed2_cold;
-                var time_data = response.data.chart_time;
-                var new_data = [temp_data, valve_data,time_data];
+    
 
-
-                console.log("Received new Chart Data: " +new_data +" with time stamp: " + time_data);
-                console.log(response.data)
-                if (myChart.data.labels.length >= 1000) {
-                    myChart.data.labels.shift();
-                    myChart.data.datasets.forEach((dataset) => {
-                        dataset.data.shift();
-                    })
-
-                }
-                myChart.data.labels.push(time_data);
-                myChart.data.datasets.forEach((dataset, index) => {
-                    dataset.data.push(new_data[index]);
-                })
-                myChart.update();
-                
-            }
-        })
-    };
-    //socket.io tasks to be performed when messages are received from the server.
-
-    // socket.on("newchartdata3", function(msg) {
-    //     var new_data = [msg.T_shed3, msg.Valve_shed3_hot, msg.time]
-    //     var time_stamp = new_data.pop(2)
-    //     console.log("Received Chart Data :" + new_data + " with time stamp: " + time_stamp);
-    //     //remove oldest once chart is 24hrs
-    //     if (myChart.data.labels.length >= 60) {
-    //         myChart.data.labels.shift();
-    //         myChart.data.datasets.forEach((dataset) => {
-    //             dataset.data.shift();
-    //         })
-    //     }
-    //     myChart.data.labels.push(time_stamp);
-    //     myChart.data.datasets.forEach((dataset, index) => {
-    //         dataset.data.push(new_data[index]);
-    //     })
-    //     myChart.update();
-    // });
 })
 
 

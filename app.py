@@ -26,7 +26,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shedDB.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False #to supress warning
 db = SQLAlchemy(app)
 
-socketio = SocketIO(app)       # If using sockets. Binds SocketIO to app
+#socketio = SocketIO(app)       # If using sockets. Binds SocketIO to app
 
 #----------------- Load settings from config file, initiate daq -------------------------------------------------------
 
@@ -88,6 +88,10 @@ def permeation():
 @app.route('/health')
 def all_health():
     return render_template('all_health.html')
+
+@app.route('/SHED3')
+def SHED3():
+    return render_template('SHED3_nosettings.html', vars_eng = vars_disp, limits = alarm, shed=shed_status)
     
 @app.route('/all_control')
 def all_control():
@@ -122,6 +126,10 @@ def update_page_data():
         elif "trafficlight_" in variable:
             temp_statevar = variable[13:].upper()
             data[variable]= shed_status[temp_statevar].state
+        elif "timer_shed3" in variable:
+            data[variable] = shed_status["SHED3"].timer()
+        elif "timer_status_shed3" in variable:
+            data[variable] = shed_status["SHED3"].timer_state
     return jsonify(ajax_data=data)
 
 @app.route("/_alarm_reset")
@@ -148,6 +156,8 @@ def set_variable_value():
         queue.put({"PID_change_request" : variable_to_set})
     elif "setpoint_" in variable_name:
         queue.put({"SHED_setpoint_request" : variable_to_set})
+    elif "timer_status" in variable_name:
+        queue.put({"update_timer_state" : variable_to_set})
     else:
         queue.put({"write_channels": variable_to_set})
 
@@ -157,24 +167,51 @@ def set_variable_value():
 @app.route('/_maq20_fetch_data')                            #Used for maq20_overview.html - not super useful outside of an overview
 def maq20_fetch_data():
     data = daq.read_modules(daq.modules)
+    print(data)
     return jsonify(ajax_data=data)
 
 @app.route('/_initialize_data') # initialize data on page reload for each plot. 
-def initialize_data():
-    records = db_save.EngData.query.order_by(db_save.EngData.timestamp.desc()).limit(1440).all()
-    y_vals = []
-    valve3_vals = []
-    time_vals = []
-    for entry in records:
-        y_vals.append(entry.T_shed3)
-        time_vals.append(entry.time)
-        valve3_vals.append(entry.Valve_shed3_hot)
-    y_vals.reverse()
-    time_vals.reverse()
-    valve3_vals.reverse()
-    print("time values are: ",time_vals)
-    return jsonify(time=time_vals, T_shed3=y_vals, Valve_shed3_hot=valve3_vals)
+def initialize_data(): ## Made to work, needs to be updated with appropriate values if 
+    records = db_save.EngData.query.order_by(db_save.EngData.timestamp.desc()).limit(100).all()
+    #print(records)
 
+    
+    T_shed2 = []
+    T_shed3 = []
+    Valve_shed3_hot = []
+    Valve_shed2_cold = []
+    Valve_shed2_hot = []
+    time = []
+
+    for entry in records:
+        time.append(entry.chart_time)   
+        Valve_shed3_hot.append(entry.Valve_shed3_hot)
+        Valve_shed2_hot.append(entry.Valve_shed2_hot)
+        Valve_shed2_cold.append(entry.Valve_shed2_cold)
+        T_shed2.append(entry.T_shed2)
+        T_shed3.append(entry.T_shed3)
+    print(type(records))
+    T_shed3.reverse()
+    time.reverse()
+    T_shed2.reverse()
+    Valve_shed3_hot.reverse()
+    Valve_shed2_cold.reverse()
+    Valve_shed2_hot.reverse()
+
+    Valve_shed3_hot.reverse()
+    print("time values are: ",time)
+    return jsonify(time=time, T_shed2=T_shed2,T_shed3=T_shed3, Valve_shed3_hot=Valve_shed3_hot, Valve_shed2_hot=Valve_shed2_hot, Valve_shed2_cold=Valve_shed2_cold)
+
+@app.route('/_update_data') # update chart data
+def update_data():
+        # time = vars_eng["time"]
+        # day = day
+        
+    return jsonify(data = vars_eng)
+
+
+
+    
 #--------------------- Regular functions - Can be used by routes, background thread etc. --------------------------------------------------------
 
 def read_daq():                                             # get current channel values from list in vars_raw
@@ -202,7 +239,6 @@ def background_tasks(queue=Queue):
                 for key in task.keys():
                     if key == "write_channels":
                         daq.write_channels(task[key])
-                        #vars_raw = task[key]
                     elif key == "update_shed_request":
                         update_shed_request(task[key])
                     elif key == "limit_set_request":
@@ -211,6 +247,8 @@ def background_tasks(queue=Queue):
                         pid_onoff(task[key])
                     elif key == "SHED_setpoint_request":
                         setpoint_change(task[key])
+                    elif key == "update_timer_state":
+                        shed_status["SHED3"].timer_toggle()
                     else:
                         print("Background task error: The task does not exist")
             t_now = datetime.now()
@@ -227,26 +265,19 @@ def background_tasks(queue=Queue):
         
 def dataHandler():
     ## Responsible for saving data to database and send data through the socket to be used in plots
-    sleep(10)
-    print("Background database save thread started")
-    #t_now = datetime.now()
-    #t_next = t_now + timedelta(seconds=5)
+    print("Background database save thread started -  Delay for population of Engineering Values")
+    sleep(10) # allow for vars_eng population
+    print("Background database save thread start recording")
+
     while True:
-        # while t_now < t_next:
-        #     t_now = datetime.now()
-        #     sleep(0.5)
-        
-                     # runs every 1 second (Slower tasks, reading daq etc)
-        #t_now = datetime.now()
         ##### Scheduled tasks for background ###
         db_save.save_data(vars_raw, vars_eng)
         records = vars_eng #db_save.EngData.query.order_by(db_save.EngData.timestamp.desc()).limit(1).all()
-        #records['time'] = t_now.strftime("%H:%M:%S")
-        # print(records)
-        print("SOCKET")
-        socketio.emit('newchartdata3', {'T_shed3':records['T_shed3'], 'Valve_shed3_hot': records['Valve_shed3_hot'], 'time':records['time']}, namespace='/test')
-        #t_next = t_next + timedelta(seconds=5) 
-        socketio.sleep(5)
+        #print("Engineering Values saved to 'shedDB.db'")
+        #---- Un-comment and edit below if socket to be used---------##
+        #socketio.emit('newchartdata3', {'T_shed3':records['T_shed3'], 'Valve_shed3_hot': records['Valve_shed3_hot'], 'time':records['time']}, namespace='/test')
+        #socketio.sleep(5)
+        sleep(60) # comment if socket used
 
 #---------------------- Update SHED operation functions ----------------------------------------------------------------
 
@@ -361,5 +392,5 @@ if __name__ == '__main__':
     #socketio.run(app, host='0.0.0.0')  # used for eventlet with socketio
     background.start()
     background2.start()
-    socketio.run(app, host='0.0.0.0', use_reloader=False) #This requires chosing the correct http or https version of socket io in the .js.
-    #serve(app, port=5000)               # used for waitress, without sockets
+    #socketio.run(app, host='0.0.0.0', use_reloader=False) #This requires chosing the correct http or https version of socket io in the .js.
+    serve(app, port=5000)               # used for waitress, without sockets

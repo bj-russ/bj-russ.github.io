@@ -61,7 +61,7 @@ div {
   display: grid;
   grid-template: 100px 500px / 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   width: 90%;
-  background-color: lightgray;
+  background-color:  whitesmoke;
   margin: auto;
   
 }

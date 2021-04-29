@@ -1,5 +1,6 @@
 import time
 import json
+from datetime import datetime
 
 with open('config.json') as json_file:
     settings = json.load(json_file)
@@ -34,6 +35,14 @@ def raw_to_eng(data, calibration):
     data is the dictionary passed from the daw during the input. 
     return: new_data dictionary with values changed from raw values to engineering values
     """
+    
+    timestamp = datetime.now()
+    data["chart_time"] = timestamp.strftime("%m/%d %H:%M")
+    data["timestamp"] = timestamp
+    data["year"] = timestamp.year
+    data["month"] = timestamp.month
+    data["day"] = timestamp.day
+    data["time"] = timestamp.strftime("%H:%M:%S")
     new_data = {}
     for key, value in data.items():
         if key.endswith("_l", 7,9) or key.endswith("_r", 7,9):
@@ -43,6 +52,10 @@ def raw_to_eng(data, calibration):
         #    new_data[key] = frequency_to_flowrate(key,value)
         else:
             new_data[key] = value
+        try:
+            new_data[key] = float(new_data[key])
+        except: 
+            None
     return new_data
 
 def alarm_limit_check(var_eng_dict,alarm_dict):

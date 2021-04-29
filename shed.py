@@ -1,4 +1,5 @@
 from simple_pid import PID
+from datetime import datetime
 
 
 class shed():
@@ -24,7 +25,10 @@ class shed():
             self.pid_control = settings["PID"]["control"]
             self.pid_state = False
             self.pid.output_limits = (0,10)
-
+        self.timer_start = datetime.now()
+        self.timer_elapsed = datetime.now() - self.timer_start
+        self.timer_state = 0
+        self.timer_output = ""
     def change_request(self, value):
         self.request = value
         # print (self.request)
@@ -93,7 +97,29 @@ class shed():
             print(self.set_temp, SHED_temp_current)
             print(output)
         return output
-            
+
+    def timer(self):
+        if self.timer_state == 0:
+            self.timer_start = datetime.now()
+        self.timer_elapsed = datetime.now() - self.timer_start
+        weeks = 0
+        if self.timer_elapsed.days >= 7:
+            weeks = self.timer_elapsed/7
+        days = self.timer_elapsed.days - 7 * weeks
+        hours = self.timer_elapsed.seconds // 3600
+        minutes = self.timer_elapsed.seconds // 60 % 60
+
+        self.timer_output = str(weeks) + "W " + str(days) + "d " + str(hours) + "h " +str(minutes) + "m " + str(self.timer_elapsed.seconds)
+        return self.timer_output
+    
+    def timer_toggle(self):
+        if self.timer_state == 0:
+            self.timer_state = 1
+            self.timer_start = datetime.now()
+        else:
+            self.timer_state = 0
+
+
 
 class alarm():
     def __init__(self, name, settings):

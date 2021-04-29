@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+{% block content %}
+
+<link rel="stylesheet" type="text/css" href="/static/styles/all_health.css">
+<link rel="stylesheet" type="text/css" href="/static/styles/SHED3.css">
+
+<script src="static/js/SHED3.js"></script>
+
+
+<h1 style="padding-left:20px">SHED 3 control page</h1>
+<p style="padding-left:20px">This page includes concentrated information important for SHED3 Permeation testing</p>
+<div class="row">
+
+    <div class="column">
+        <table width="100%">
+
+
+            <th colspan="3">
+                Alarm Monitoring
+            </th>
+            <tr>
+                <th width="33%">SHED1 Alarm Input</th>
+                <th width="33%">SHED2 Gas Analyzer</th>
+                <th width="33%">SHED3 Gas Analyzer</th>
+            </tr>
+            <tr>
+                <td id="alarm_Alarm_shed1">
+                    SHED1 Alarm input
+                </td>
+                <td id="alarm_Gas_analyzer_shed2">THC alarm2</td>
+                <td id="alarm_Gas_analyzer_shed3">THC alarm3</td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button" onclick="buttonAlarm('alarm_Alarm_shed1')" id="alarm_Alarm_shed1">Alarm
+                        Reset</button>
+                </td>
+                <td>
+                    <button type="button" onclick="buttonAlarm('alarm_Gas_analyzer_shed2')"
+                        id="alarm_Gas_analyzer_shed2">Alarm
+                        Reset</button>
+                </td>
+                <td>
+                    <button type="button" onclick="buttonAlarm('alarm_Gas_analyzer_shed3')"
+                        id="alarm_Gas_analyzer_shed3">Alarm
+                        Reset</button>
+                </td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td>
+
+                    <label for="input_low_Gas_analyzer_shed2">Low Limit:</label>
+                    <input type="number" id="input_low_Gas_analyzer_shed2" min="0" max="100" value={{
+                        limits.Gas_analyzer_shed2.limit_low }}>
+                </td>
+                <td>
+                    <label for="input_low_Gas_analyzer_shed3">Low Limit:</label>
+                    <input type="number" id="input_low_Gas_analyzer_shed3" min="0" max="100" value={{
+                        limits.Gas_analyzer_shed3.limit_low }}>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <label for="input_high_Gas_analyzer_shed2">High Limit:</label>
+                    <input type="number" id="input_high_Gas_analyzer_shed2" min="0" max="100" value={{
+                        limits.Gas_analyzer_shed2.limit_high }}>
+                </td>
+                <td>
+                    <label for="input_high_Gas_analyzer_shed3">High Limit:</label>
+                    <input type="number" id="input_high_Gas_analyzer_shed3" min="0" max="100" value={{
+                        limits.Gas_analyzer_shed3.limit_high }}>
+                </td>
+            </tr>
+        </table><br>
+
+        <table width="100%">
+
+
+            <th colspan="4">Auxiliary Items</th>
+            <tr>
+
+                <th>Exhaust Damper</th>
+                <th>Exhaust Fan</th>
+                <th>SHED2 Exhaust</th>
+                <th>SHED3 Exhaust</th>
+            </tr>
+            <tr>
+                <td id="Exhaust_damper_onOff"></td>
+                <td id="Exhaust_fan_onOff"></td>
+                <td id="Exhaust_shed2_onOff"></td>
+                <td id="Exhaust_shed3_onOff"></td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button" onclick="buttonClicked('Exhaust_damper')" id="input_Exhaust_damper">Exhaust
+                        Damper</button>
+                </td>
+                <td>
+                    <button type="button" onclick="buttonClicked('Exhaust_fan')" id="input_Exhaust_fan">Exhaust
+                        Fan</button>
+                </td>
+                <td>
+                    <button type="button" onclick="buttonClicked('Exhaust_shed2')" id="input_Exhaust_fan">Exhaust
+                        SHED2</button>
+                </td>
+                <td>
+                    <button type="button" onclick="buttonClicked('Exhaust_shed3')" id="input_Exhaust_fan">Exhaust
+                        SHED3</button>
+                </td>
+            </tr>
+        </table>
+        <table>
+
+            <tr>
+                <th colspan="4">
+                    <h1>Main Flow</h1>
+                </th>
+            </tr>
+            <tr>
+                <th class="cold_head" colspan="4">Cold</th>
+
+            </tr>
+            <tr>
+                <th>Pump </th>
+                <th>Flow Rate</th>
+                <th>Flow Temp.</th>
+                <th>Valve Position</th>
+
+            </tr>
+            <tr>
+                <td id="Pump_main_cold_onOff">0</td>
+                <td id="Flowmeter_main_cold">0</td>
+                <td id="T_main_cold">0</td>
+                <td id="Valve_main_cold">0</td>
+
+
+            </tr>
+            <tr>
+                <td>
+                    <button type="button" onclick="buttonClicked('Pump_main_cold')" id="input_Pump_main_cold">Main
+                        Cold Pump</button>
+                    <!-- <div class="inputgroup">
+                        <input id="input_Pump_main_cold" name="input_Pump_main_cold" type="checkbox" />
+                        <label for="input_Pump_main_cold">Pump i/o</label>
+                    </div> -->
+                </td>
+                <td id="warning_Flowmeter_main_cold"></td>
+
+                <td id="warning_T_main_cold"></td>
+
+                <td>
+
+                    <input type="range" min="0" max="10" value="0" step="0.1" id="input_Valve_main_cold"
+                        name="input_Valve_main_cold" value={{ vars_eng.Valve_main_cold }}>
+                    <div>
+
+                </td>
+
+            </tr>
+            <tr>
+                <th colspan="2">Flow Rate Warning Limits</th>
+                <th colspan="2">Flow Temp. Warning Limits</th>
+
+            </tr>
+            <tr>
+                <td>
+                    <label for="input_low_Flowmeter_main_cold">Low:</label>
+                    <input type="number" id="input_low_Flowmeter_main_cold" min="0" max="10" value={{
+                        limits.Flowmeter_main_cold.limit_low }}>
+                </td>
+                <td>
+                    <label for="input_high_Flowmeter_main_cold">High:</label>
+                    <input type="number" id="input_high_Flowmeter_main_cold" min="0" max="10" value={{
+                        limits.Flowmeter_main_cold.limit_high }}>
+                </td>
+
+                <td>
+                    <label for="input_low_T_main_cold">Low:</label>
+                    <input type="number" id="input_low_T_main_cold" min="0" max="100" value={{
+                        limits.T_main_cold.limit_low }}>
+                </td>
+                <td>
+                    <label for="input_high_T_main_cold">High:</label>
+                    <input type="number" id="input_high_T_main_cold" min="0" max="100" value={{
+                        limits.T_main_cold.limit_high }}>
+                </td>
+
+            </tr>
+            <tr>
+                <th class="hot_head" colspan="4">Hot</th>
+            </tr>
+            <tr>
+                <th>Pump</th>
+                <th>Flow Rate</th>
+                <th>Flow Temp.</th>
+                <th>Valve Position</th>
+            </tr>
+            <tr>
+                <td id="Pump_main_hot_onOff">0</td>
+                <td id="Flowmeter_main_hot">0</td>
+                <td id="T_main_hot">0</td>
+                <td id="Valve_main_hot">0</td>
+            </tr>
+            <tr>
+                <td>
+                    <button type="button" onclick="buttonClicked('Pump_main_hot')" id="input_Pump_main_hot">Main Hot
+                        Pump</button>
+                    <!-- <div class="inputgroup">
+                    <input id="input_Pump_main_hot" name="input_Pump_main_hot" type="checkbox" />
+                    <label for="input_Pump_main_hot">Pump i/o</label>
+                </div> -->
+                </td>
+                <td id="warning_Flowmeter_main_hot"></td>
+                <td id="warning_T_main_hot"></td>
+                <td>
+
+                    <input type="range" min="0" max="10" value="0" step="0.1" id="input_Valve_main_hot"
+                        name="input_Valve_main_hot">
+                    <div>
+
+                </td>
+            </tr>
+            <tr>
+                <th colspan="2">Flow Rate Warning Limits</th>
+                <th colspan="2">Flow Temp. Warning Limits</th>
+            </tr>
+            <tr>
+                <td>
+                    <label for="input_low_Flowmeter_main_hot">Low:</label>
+                    <input type="number" id="input_low_Flowmeter_main_hot" min="0" max="10" value={{
+                        limits.Flowmeter_main_hot.limit_low }}>
+                </td>
+                <td>
+                    <label for="input_high_Flowmeter_main_hot">High:</label>
+                    <input type="number" id="input_high_Flowmeter_main_hot" min="0" max="10" value={{
+                        limits.Flowmeter_main_hot.limit_high }}>
+                </td>
+
+                <td>
+                    <label for="input_low_T_main_hot">Low:</label>
+                    <input type="number" id="input_low_T_main_hot" min="0" max="100" value={{
+                        limits.T_main_hot.limit_low }}>
+                </td>
+                <td>
+                    <label for="input_high_T_main_hot">High:</label>
+                    <input type="number" id="input_high_T_main_hot" min="0" max="100" value={{
+                        limits.T_main_hot.limit_high }}>
+                </td>
+            </tr>
+
+        </table>
+
+    </div>
+    <!-- END MAIN FLOW COLUMN -->
+    <!-- START SHED3 DOUBLE COLUMN -->
+    <div class="column2">
+        <div class="row">
+            <div class="column">
+                <div class="inputgroup">
+                    <input id="input_SHED3_request" name="input_SHED3_request" type="checkbox" />
+                    <label for="input_SHED3_request">SHED3 on/off</label>
+                </div>
+                <table width="100%">
+                    <tr>
+                        <td colspan="4">
+                            <div class="t1" id="T_shed3">T</div>
+                        </td>
+
+                        <td>
+                            <div class="traffic-light">
+                                <div class="light off" id="shed3_red"></div>
+                                <div class="light off" id="shed3_amber"></div>
+                                <div class="light off" id="shed3_green"></div>
+                            </div>
+                            <div id="trafficlight_shed3"></div>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">PID control Settings</th>
+                        <td colspan="3">
+                            <label for="input_setpoint_T_shed3">SHED3 Temperature Setpoint:</label>
+                            <input type="number" id="input_setpoint_T_shed3" min="0" max="1000" value={{
+                                shed.SHED3.set_temp }}>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button type="button" onclick="buttonClicked('pid_shed3')" id="input_pid_shed3">Shed 2 PID
+                                control</button>
+                        </td>
+                        <td id="pid_shed3_onOff">PID on/off notification</td>
+                        <td>
+                            <label for="input_setpoint_P_shed3">P:</label>
+                            <input type="number" id="input_setpoint_P_shed3" min="0" max="100" step=".1" value={{
+                                shed.SHED3.p}}>
+                        </td>
+                        <td>
+                            <label for="input_setpoint_I_shed3">I:</label>
+                            <input type="number" id="input_setpoint_I_shed3" min="0" max="100" step=".1" value={{
+                                shed.SHED3.i}}>
+                        </td>
+                        <td>
+                            <label for="input_setpoint_D_shed3">D:</label>
+                            <input type="number" id="input_setpoint_D_shed3" min="0" max="100" step=".1" value={{
+                                shed.SHED3.d}}>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="column_special">
+                <table width="100%">
+                    <tr>
+                        <td class="t1" rowspan="2">
+                            <div id="timer_shed3">TIMER</div>
+                        </td>
+                        <td style="width:5%">
+                            <div id="timer_status_shed3">Status</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width:5%"><button type="button" onclick="buttonClicked('timer_status_shed3')" id="input_timer_status_shed3">SHED3 Timer</button></td>
+                    
+                     
+                    </tr>
+                </table>
+                <test>test</test>
+            </div>
+        </div>
+        <div class="row">
+        <div class="content white">
+            <canvas id="myChart_shed3"></canvas>
+        </div>
+    </div>
+
+
+        <!-- END SHED3 DOUBLE COLUMN -->
+    </div>
+
+    <!-- END ROW including Main and SHED3 double column -->
+    {% endblock %}

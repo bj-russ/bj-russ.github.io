@@ -22,10 +22,16 @@
     padding: 10px;
   }
 
-  .columnx2 {
+  .column2 {
     background-color: whitesmoke ;
     float: left;
     width: 66%;
+    padding: 10px;
+  }
+  .column_special {
+    background-color: whitesmoke ;
+    float: left;
+    width: 65%;
     padding: 10px;
   }
   

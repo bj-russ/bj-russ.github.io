@@ -3,11 +3,15 @@
 
 <link rel="stylesheet" type="text/css" href="/static/styles/all_health.css">
 
-<script src="static/js/base.js" src="static/js/trafficlight.js"></script>
+<script src="static/js/base.js"></script>
+
 
 
 <h2> Permeation SHED Monitoring and Control</h2>
-<p>This page includes the monitoring of all 3 SHEDs as well as control for SHED3</p>
+<p>This page includes the monitoring of all 3 SHEDs as well as the ability to control all adjustable items.</p>
+<p>Limits set on this page will be kept until the application is reset. They will return to the values set in the "config.json" file when the application is restarted</p>
+<p>Each pump can be turned on independently as well as each valve adjusted independently.</p>
+<p>Turning each SHED on/off will overwrite the manual settings</p>
 <div class="main_flow">
     <div class="row">
         <div class="column">
@@ -406,7 +410,9 @@
                 <input id="input_SHED2_request" name="input_SHED2_request" type="checkbox" />
                 <label for="input_SHED2_request">SHED2 on/off</label>
             </div>
-            <p> Plot here</p>
+            <div class="content white">
+                <canvas id="myChart_shed2"></canvas>
+              </div>
             <table width="100%">
                 <tr>
                     <td colspan="4">
@@ -597,7 +603,7 @@
                 <label for="input_SHED3_request">SHED3 on/off</label>
             </div>
             <div class="content white">
-                <canvas id="myChart"></canvas>
+                <canvas id="myChart_shed3"></canvas>
               </div>
             <table width="100%">
                 <tr>
@@ -625,7 +631,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <button type="button" onclick="buttonClicked('pid_shed3')" id="input_pid_shed3">Shed 2 PID
+                        <button type="button" onclick="buttonClicked('pid_shed3')" id="input_pid_shed3">Shed 3 PID
                             control</button>
                     </td>
                     <td id="pid_shed3_onOff">PID on/off notification</td>
