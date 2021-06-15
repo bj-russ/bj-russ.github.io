@@ -1,0 +1,29 @@
+{% extends "soak_temps/Soak_sidebar.html" %}
+{% block main %}
+<link rel="stylesheet" type="text/css" href="/static/styles/style.css">
+
+<head>
+  <title>CSS Template</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+
+<body>
+  <div class="content">
+    <h2>Soak Bay Temperatures Home</h2>
+    <h3>Use sidebar to navigate</h3>
+    <p>
+      Current Soak Temperature monitor display works by receiving data from a SQL database in Python. The last x (currently
+      100) datapoints are saved and reversed to display in proper order. The data is updated using a ajax call function
+      which requests new data from the python program at x intervals (currently 5 mins)
+    </p>
+  </div>
+
+</body>
+
+</html>
+
+
+
+{% endblock %}

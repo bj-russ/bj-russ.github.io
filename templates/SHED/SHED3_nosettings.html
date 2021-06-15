@@ -1,5 +1,5 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends "SHED/SHED_sidebar.html" %}
+{% block main %}
 
 <link rel="stylesheet" type="text/css" href="/static/styles/all_health.css">
 <link rel="stylesheet" type="text/css" href="/static/styles/SHED3.css">
@@ -7,6 +7,7 @@
 <script src="static/js/SHED3.js"></script>
 
 
+<!-- <div class="main"> -->
 <h1 style="padding-left:20px">SHED 3 control page</h1>
 <p style="padding-left:20px">This page includes concentrated information important for SHED3 Permeation testing</p>
 <div class="row">
@@ -93,25 +94,7 @@
                     <h1>Main Flow</h1>
                 </th>
             </tr>
-            <tr>
-                <th class="cold_head" colspan="4">Cold</th>
-
-            </tr>
-            <tr>
-                <th>Pump </th>
-                <th>Flow Rate</th>
-                <th>Flow Temp.</th>
-                <th>Valve Position</th>
-
-            </tr>
-            <tr>
-                <td id="Pump_main_cold_onOff">0</td>
-                <td id="Flowmeter_main_cold">0</td>
-                <td id="T_main_cold">0</td>
-                <td id="Valve_main_cold">0</td>
-
-
-            </tr>
+            
 
 
             <tr>
@@ -246,19 +229,20 @@
 
                     </tr>
                 </table>
-                <div class="content white">
+                <div class="chart white">
                     <canvas id="myChart_shed3"></canvas>
                 </div>
-                <test>test</test>
+
             </div>
         </div>
 
 
-    </div>
+    </div><!-- END SHED3 DOUBLE COLUMN -->
 
 
-    <!-- END SHED3 DOUBLE COLUMN -->
-</div>
+    
+</div><!-- END ROW including Main and SHED3 double column -->
+<!-- </div> END MAIN -->
 
-<!-- END ROW including Main and SHED3 double column -->
+
 {% endblock %}

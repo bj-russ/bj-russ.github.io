@@ -100,26 +100,5 @@ class dataforth():
 
 
 
-#-----Function Testing-----
-#with open("config.txt", 'w') as outfile:
-#    json.dump(settings, outfile)
-
-'''
-try:
-    daq = dataforth(settings)
-    channels_read = []
-    for channel in settings['channel_map_inputs'].keys():
-        channels_read.append(channel)
-    channels_write = {}
-    for channel in settings['channel_map_outputs'].keys():
-        channels_write[channel] = 1
-    while True:
-        daq.write_channels(channels_write)
-        channel = daq.read_channels(channels_read)
-        print(channel)
-        time.sleep(1)
-except KeyboardInterrupt:
-    pass
-'''
 
    

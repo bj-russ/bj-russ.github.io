@@ -104,12 +104,13 @@ class shed():
         self.timer_elapsed = datetime.now() - self.timer_start
         weeks = 0
         if self.timer_elapsed.days >= 7:
-            weeks = self.timer_elapsed/7
+            weeks = self.timer_elapsed // 7
         days = self.timer_elapsed.days - 7 * weeks
         hours = self.timer_elapsed.seconds // 3600
         minutes = self.timer_elapsed.seconds // 60 % 60
+        seconds = self.timer_elapsed.seconds - minutes*60 - hours*3600 - days * 86400
 
-        self.timer_output = str(weeks) + "W " + str(days) + "d " + str(hours) + "h " +str(minutes) + "m " + str(self.timer_elapsed.seconds)
+        self.timer_output = str(weeks) + "W " + str(days) + "d " + str(hours) + "h " +str(minutes) + "m " + str(seconds)
         return self.timer_output
     
     def timer_toggle(self):

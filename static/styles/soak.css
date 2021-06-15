@@ -1,0 +1,346 @@
+html, body {
+    margin: 0;
+    padding: 0;
+  }
+  /* Style the side navigation */
+  .sidenav {
+    height: 100%;
+    width: 200px;
+    position: fixed;
+    z-index: 0;
+    top:50;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+  }
+  
+  
+  /* Side navigation links */
+  .sidenav a {
+    color: white;
+    padding: 16px;
+    text-decoration: none;
+    display: block;
+  }
+  
+  /* Change color on hover */
+  .sidenav a:hover {
+    background-color: #ddd;
+    color: black;
+  }
+  /* Add a black background color to the top navigation */
+  .topnav {
+      background-color: #333;
+      position: fixed;
+      width: 100%;
+      height: 50;
+      overflow: hidden;
+      margin-bottom: 50px;
+    }
+    
+    /* Style the links inside the navigation bar */
+    .topnav a {
+      float: left;
+      color: #f2f2f2;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 17px;
+      
+    }
+    
+    /* Change the color of links on hover */
+    .topnav a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+    
+    /* Add a color to the active/current link */
+    .topnav a:active {
+      background-color: #1a1df5;
+      color: white;
+    }
+  
+    .currentLink {
+      color: white;
+      background-color: #1a1df5;
+   }
+  
+  .maq20_grid {
+    display: grid;
+    grid-template: 1fr / 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  
+  }  
+  
+  .module {
+    display: inline-block;
+    margin-left: 10px;
+    text-align: right;
+  }
+  div {
+    margin-left: 5px;
+    margin-right: 5px
+  }
+  .inline {
+    display: inline-flex;
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+  
+  .permeation_grid {
+    display: grid;
+    grid-template: 100px 500px / 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    width: 90%;
+    background-color:  whitesmoke;
+    margin: auto;
+    
+  }
+  .permeation_overview {
+    grid-area: 1 / 2 / span 1 / span 8;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid black;
+    border-radius: 3px;
+  }
+  .permeation_controls {
+    grid-area: 2 / 1 / span 3 / span 2;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid black;
+    border-radius: 3px;
+  }
+  .permeation_gauges{
+    grid-area: 2 / 3 / span 2 / span 3;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2 px solid black;
+    border-radius: 3px;
+  }
+  
+  .permeation_gauges {
+    grid-area: 2 / 4 /span 1/ span 2;
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid black;
+    border-radius: 3px;
+  }
+  
+  .bold {
+    font-weight: Bold;
+  }
+  
+  .white_background {
+    background-color: white;
+  }
+  
+  .range_normal {
+    background-color: hsla(0, 100%, 50%, 0);
+  }
+  
+  .range_high {
+    background-color: hsla(0, 100%, 50%, 1);
+  }
+  
+  .range_low {
+    background-color: hsla(220, 100%, 50%, 1);
+  }
+  
+  .t1 {
+    text-align: center;
+    font-size: 80;
+    font-weight: Bold;
+  }
+  
+  /* Style the content */
+  .content {
+    background-color: #ddd;
+    /* margin-left: 200px; */
+    padding-left: 20px;
+  }
+  
+  .chart {
+    background-color: white;
+    margin-left: 0px;
+    padding: 20 px;
+  }
+  .main {
+    margin-left: 200px;
+   }
+
+   * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  /* Style the header */
+  .main_flow {
+    background-color: #f1f1f1;
+     padding: 20px; 
+    /*text-align: center;*/
+    font-size: 35px;
+  }
+  
+  /* Create three equal columns that floats next to each other */
+  .column {
+    background-color: whitesmoke ;
+    float: left;
+    width: 32.5%;
+    padding: 10px;
+  }
+
+  .column2 {
+    background-color: whitesmoke ;
+    float: left;
+    width: 66%;
+    padding: 10px;
+  }
+  .column_special {
+    background-color: whitesmoke ;
+    float: left;
+    width: 65%;
+    padding: 10px;
+  }
+  
+  /* Clear floats after the columns */
+  .row:after {
+    background-color: whitesmoke ;
+    content: "";
+    display: table;
+    clear: both;
+    text-align: center;
+    align-content: center;
+  }
+  
+  /* Style the footer */
+  .footer {
+    background-color: #f1f1f1;
+    padding: 10px;
+    text-align: center;
+  }
+
+  /* hot/cold container*/
+  .hotcold{
+    width: 33%;
+  }
+
+  /* hot/cold container*/
+  .hot_head{
+    background-color: rgb(255, 123, 123);
+    width: 33%; 
+    padding: 5px;
+    text-align: center;
+    font-size: 40px;
+  }
+  .cold_head{
+    background-color: rgb(127, 177, 252);
+    padding: 5px;
+    width: 33%;
+    font-size: 40px;
+    text-align: center;
+  }
+  .hot_head2{
+    background-color: rgb(255, 123, 123);
+    
+    padding: 5px;
+    text-align: center;
+    font-size: 20px;
+  }
+  .cold_head2{
+    background-color: rgb(127, 177, 252);
+    padding: 5px;
+    ;
+    font-size: 20px;
+    text-align: center;
+  }
+  
+
+  /* Main table variable */
+  .main_table{
+    
+    
+    text-align: center;
+
+  }
+  th {
+    border: 2px solid #000000;
+  }
+  
+  table {
+    text-align: center;
+    /* margin: 20px auto; */
+    border-spacing: 0;
+  }
+  
+  td {
+    border: 2px solid #000000;
+    width: 30px;
+  }
+  /* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
+  @media (max-width: 600px) {
+    .column {
+      width: 100%;
+    }
+  }
+  table, th, td {
+    border: 2px solid black;
+    border-collapse: collapse;
+  }
+
+
+  /* For Traffic light */
+  .traffic-light
+{ 
+  width:100px;
+  height:90px;
+  background-color: transparent;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  /* width: 50%; */
+}
+
+.light
+{
+  
+  width:80px;
+  height:30px;
+  border:3px solid;
+  margin-left:auto;
+  margin-right:auto;
+  border-radius: 50px;
+}
+
+.red
+{ 
+  transition: background-color 0.2s ease;
+  background-color:red;
+
+  /* transform: translate(-50%, -50%) scale3d(1, 1, 1); */
+  /* transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); */
+}
+.amber
+{
+  transition: background-color 0.2s ease;
+  background-color:yellow;
+  /* transition: opacity 2s ease-in; */
+  /* transform: translate(-50%, -50%) scale3d(1, 1, 1); */
+  /* transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); */
+}
+.green
+{
+  transition: background-color 0.2s ease;
+  background-color:green;
+  /* transition: opacity 2s ease-in; */
+  /* transform: translate(-50%, -50%) scale3d(1, 1, 1); */
+  /* transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1); */
+}
+
+.off
+{
+  transition: background-color 0.2s ease;
+  background-color:transparent;
+ }
+

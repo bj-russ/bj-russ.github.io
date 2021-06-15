@@ -112,7 +112,7 @@ function update_options(variables, options) {
         }
         if (options[i] == "GPM") {
 
-            variable = String(variable) + " GPM";
+            variable = String(variable) + "\n GPM";
         }
         updated_variables[i] = variable
     }
@@ -136,9 +136,9 @@ function buttonClicked(variable_id) {
     var variable_value_current = $('#' + variable_id).text(); // text is used for getting the html string between the tag brackets. Val works on input boxes.
     var variable_value_new = 0
     if ((variable_value_current == 0) || (variable_value_current == 'Off') || variable_value_current == 'false' || variable_value_current == 'off' || variable_value_current == false) {       // check the current state and update with new value, case added for onOff option
-        variable_value_new = true
+        variable_value_new = 1
     } else {
-        variable_value_new = false
+        variable_value_new = 0
     }
     var variable = {}
     variable[variable_id] = variable_value_new
@@ -343,7 +343,7 @@ $(document).ready(function () {
                 yAxes: [{
                     ticks: {
                         beginAtZero: true,
-                        suggestedMax: 500,
+                        suggestedMax: 50,
                         fontColor: '#c45850'
                     },
                     id: 'A',

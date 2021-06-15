@@ -1,3 +1,4 @@
+import app
 from app import db
 from datetime import datetime, timedelta
 import sqlite3
@@ -10,8 +11,22 @@ conn = sqlite3.connect("new_DB.sqlite")
     
 # )
 conn.close()
-
-
+class SoakData(db.Model):
+    id = db.Column(db.Integer, primary_key=True)  # primary key column if needed
+    timestamp = db.Column(db.DateTime, index=True, primary_key=False, unique=True)  # timestamp
+    chart_time = db.Column(db.String, index=True, unique=False)
+    year = db.Column(db.Integer, index = True, unique = False)
+    month = db.Column(db.Integer, index = True, unique = False)
+    day = db.Column(db.Integer, index = True, unique = False)
+    time = db.Column(db.String, index = True, unique = False)
+    T_soak1 = db.Column(db.Float, index =True)
+    T_soak2 = db.Column(db.Float, index =True)
+    T_soak3 = db.Column(db.Float, index =True)
+    T_soak4 = db.Column(db.Float, index =True)
+    T_soak5 = db.Column(db.Float, index =True)
+    T_soak6 = db.Column(db.Float, index =True)
+    T_soak7 = db.Column(db.Float, index =True)
+    T_soak8 = db.Column(db.Float, index =True)  
 class RawData(db.Model):  # add columns for data model here
     id = db.Column(db.Integer, primary_key=True)  # primary key column if needed
     timestamp = db.Column(db.DateTime, index=True, primary_key=False, unique=True)  # timestamp
@@ -136,56 +151,42 @@ class EngData(db.Model):  # add columns for data model here
     Exhaust_damper = db.Column(db.Float, index=True)
     Exhaust_fan = db.Column(db.Float, index=True)
 
+
+
+
 def save_data(raw_dictionary, eng_dictionary):
-    # raw_dictionary = raw_dictionary
-    # timestamp = datetime.now()
-    # year = timestamp.year
-    # month = timestamp.month
-    # day = timestamp.day
-    # time = timestamp.strftime("%H:%M:%S")
-    # chart_time = timestamp.strftime("%m/%d %H:%M")
-    # raw_dictionary = raw_dictionary
-    # eng_dictionary = eng_dictionary
-    # raw_dictionary["chart_time"] = chart_time
-    # raw_dictionary["timestamp"] = timestamp
-    # raw_dictionary["year"] = year
-    # raw_dictionary["month"] = month
-    # raw_dictionary["day"] = day
-    # raw_dictionary["time"] = time
-    # eng_dictionary["chart_time"] = chart_time
-    # eng_dictionary["timestamp"] = timestamp
-    # eng_dictionary["year"] = year
-    # eng_dictionary["month"] = month
-    # eng_dictionary["day"] = day
-    # eng_dictionary["time"] = time
-    # raw_dict = {raw_ + str(key):val for key,val in raw_dictionary.items()} #add prefix "raw_" to dictionary to separate from other dicts
     raw_dict = {}
     eng_dict= {}
-    for k,v in raw_dictionary.items():
-        if "Placeholder" in k:
+
+    for key, value in raw_dictionary.items():
+        if "Placeholder" in key:
             pass
         else:
-            raw_dict[k] = v
-    for k,v in eng_dictionary.items():
-        if "Placeholder" in k:
+            raw_dict[key] = value
+    for key,value in eng_dictionary.items():
+        if "Placeholder" in key:
             pass
         else:
-            eng_dict[k] = v
-
-
+            eng_dict[key] = value
 
     
+
+    print(eng_dict)
     data = RawData(**raw_dict )
     data2 = EngData(**eng_dict)
+    data3 = SoakData()
     db.create_all()
     db.session.add(data)
     db.session.add(data2)
+    db.session.add(data3)
+  
     #print(db)
+    db.session.commit()
+    print('Data successfully commited to database')
+    # try:
+    #     db.session.commit()
+    #     print('Data successfully commited to database')
 
-    try:
-        db.session.commit()
-        print('Data successfully commited to database')
-
-    except:
-        db.session.rollback()
-        print("Error recording data to database!")
+    # except:
+    #     db.session.rollback()
+    #     print("Error recording data to database!")

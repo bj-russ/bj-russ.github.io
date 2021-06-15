@@ -1,6 +1,7 @@
 import time
 import json
 from datetime import datetime
+import app
 
 with open('config.json') as json_file:
     settings = json.load(json_file)
@@ -47,6 +48,8 @@ def raw_to_eng(data, calibration):
     for key, value in data.items():
         if key.endswith("_l", 7,9) or key.endswith("_r", 7,9):
             new_data[key] = value*calibration[key]
+            if app.demo == True:
+                new_data[key] = new_data[key]/10
         #elif key.startswith("Flowmeter_"):
         #    print(key, value)
         #    new_data[key] = frequency_to_flowrate(key,value)

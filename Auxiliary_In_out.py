@@ -349,7 +349,7 @@ class InputValues:
             b = self.raw_to_eng(self, 'T_shed2_r')
             L2 = float(a)#.input_eng['T_shed2_l'])
             R2 = float(b)#.input_eng['T_shed2_r'])
-            self.input_eng['T_shed2'] = (L2+R2)/2
+            self.input_eng['T_shed2'] = (L2+R2)/20
             self.display_values.update({value : str(round(self.input_eng[value],2)) + u'\N{DEGREE SIGN}' + "C"})
         elif value == 'T_shed3':
             a = self.update_raw(self,'T_shed3_l')
@@ -358,7 +358,7 @@ class InputValues:
             b = self.raw_to_eng(self, 'T_shed3_r')
             L3 = float(a)#.input_eng['T_shed2_l'])
             R3 = float(b)#.input_eng['T_shed2_r'])
-            self.input_eng['T_shed3']= (L3+R3)/2
+            self.input_eng['T_shed3']= (L3+R3)/20
             self.display_values.update({value : str(round(self.input_eng[value],2)) + u'\N{DEGREE SIGN}' + "C"})
         elif "Flowmeter" in value:
             flowmeter_value_raw = self.update_raw(self,value)

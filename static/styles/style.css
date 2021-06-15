@@ -2,11 +2,40 @@ html, body {
   margin: 0;
   padding: 0;
 }
+/* Style the side navigation */
+.sidenav {
+  height: 100%;
+  width: 200px;
+  position: fixed;
+  z-index: 0;
+  top:50;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+}
 
+
+/* Side navigation links */
+.sidenav a {
+  color: white;
+  padding: 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color on hover */
+.sidenav a:hover {
+  background-color: #ddd;
+  color: black;
+}
 /* Add a black background color to the top navigation */
 .topnav {
     background-color: #333;
+    position: fixed;
+    width: 100%;
+    height: 50;
     overflow: hidden;
+    margin-bottom: 50px;
   }
   
   /* Style the links inside the navigation bar */
@@ -17,6 +46,7 @@ html, body {
     padding: 14px 16px;
     text-decoration: none;
     font-size: 17px;
+    
   }
   
   /* Change the color of links on hover */
@@ -117,6 +147,50 @@ div {
 
 .t1 {
   text-align: center;
-  font-size: 100;
+  font-size: 80;
   font-weight: Bold;
+}
+
+/* Style the content */
+.content {
+  background-color: #ddd;
+  /* margin-left: 200px; */
+  padding-left: 20px;
+}
+
+.chart {
+  background-color: white;
+  margin-left: 0px;
+  padding: 20 px;
+}
+.main {
+  margin-left: 200px;
+ }
+
+ /* ORDERED LIST FIX */
+ ol {
+  list-style-type: none;
+  counter-reset: item;
+  margin: 0;
+  padding: 0;
+}
+
+ol > li {
+  display: table;
+  counter-increment: item;
+  margin-bottom: 0.6em;
+}
+
+ol > li:before {
+  content: counters(item, ".") ". ";
+  display: table-cell;
+  padding-right: 0.6em;    
+}
+
+li ol > li {
+  margin: 0;
+}
+
+li ol > li:before {
+  content: counters(item, ".") " ";
 }

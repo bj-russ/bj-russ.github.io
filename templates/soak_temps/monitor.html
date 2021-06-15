@@ -1,0 +1,55 @@
+{% extends "soak_temps/Soak_sidebar.html" %}
+{% block main %}
+
+<link rel="stylesheet" type="text/css" href="/static/styles/soak.css">
+<head>
+<title>CSS Template</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="static/js/soak.js"></script>
+<!-- <script src="static/js/soak.js"></script> -->
+
+</head>
+<body>
+<div class="content">
+  <h1>Soak Bay Temperature Monitoring</h1>
+  <div class="row">
+    <div class="column">
+      <div class="content white">
+        <canvas id="myChart_soak1"></canvas>
+      </div>
+    </div>
+    <div class="column">
+      <div class="content white">
+        <canvas id="myChart_soak2"></canvas>
+      </div>
+    </div>
+    <div class="column">
+      <div class="content white">
+        <canvas id="myChart_soak3"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="column">
+      <div class="content white">
+        <canvas id="myChart_soak4"></canvas>
+      </div>
+    </div>
+    <div class="column">
+      <div class="content white">
+        <canvas id="myChart_soak5"></canvas>
+      </div>
+    </div>
+    <div class="column">
+      <div class="content white">
+        <canvas id="myChart_soak6"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+
+{% endblock %}

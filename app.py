@@ -16,7 +16,8 @@ from waitress import serve      # Production server for windows applications
 #import gunicorn                # Production server for linux applications
 import auxiliary_calculations
 import shed
-import db_save
+
+
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -25,6 +26,8 @@ app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///shedDB.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False #to supress warning
 db = SQLAlchemy(app)
+import db_save
+import soak_app
 
 #socketio = SocketIO(app)       # If using sockets. Binds SocketIO to app
 
@@ -55,6 +58,8 @@ for channel in settings['system_variables'].keys():
 calibration = settings["calibration"]
 all_off = settings["all_off"]
 
+soak_dict = {}
+
 
 
 #------------------- Initialize alarms ---------------------------------------------------------------------------------
@@ -75,31 +80,43 @@ for key in settings["system_variables"]:
 
 @app.route('/')
 def index():
-    return render_template('permeation.html')
+    return render_template('SHED/permeation.html')
 
 @app.route('/maq20_overview.html')
 def maq20_overview():
-    return render_template('maq20_overview.html')
+    return render_template('SHED/maq20_overview.html')
 
 @app.route('/permeation.html')
 def permeation():
-    return render_template('permeation.html')
+    return render_template('SHED/permeation.html')
+
+@app.route('/shed_about')
+def shed_about():
+    return render_template('SHED/about.html')
 
 @app.route('/health')
 def all_health():
-    return render_template('all_health.html')
+    return render_template('SHED/all_health.html')
 
 @app.route('/SHED3')
 def SHED3():
-    return render_template('SHED3_nosettings.html', vars_eng = vars_disp, limits = alarm, shed=shed_status)
+    return render_template('SHED/SHED3_nosettings.html', vars_eng = vars_disp, limits = alarm, shed=shed_status)
     
 @app.route('/all_control')
 def all_control():
     print("Page reload")
     #print(alarm["Gas_analyzer_shed2"].limit_low)
-    return render_template('all_control.html', vars_eng = vars_disp, limits = alarm, shed=shed_status)
+    return render_template('SHED/all_control.html', vars_eng = vars_disp, limits = alarm, shed=shed_status)
 
+@app.route('/soaktemps')
+def saok():
+    print("soak page")
+    return render_template('soak_temps/home.html')
 
+@app.route('/monitor')
+def monitor():
+    print("monitor page")
+    return render_template('soak_temps/monitor.html')
 
 #------------------- Data routes used by JQuery ------------------------------------------------------------------------
 
@@ -170,12 +187,150 @@ def maq20_fetch_data():
     print(data)
     return jsonify(ajax_data=data)
 
-@app.route('/_initialize_data') # initialize data on page reload for each plot. 
-def initialize_data(): ## Made to work, needs to be updated with appropriate values if 
-    records = db_save.EngData.query.order_by(db_save.EngData.timestamp.desc()).limit(100).all()
-    #print(records)
+@app.route('/_initialize_data_soak')
+def initialize_data_soak():
+    records = soak_app.SoakData.query.order_by(soak_app.SoakData.timestamp.desc()).limit(100).all()
+    print(type(records))
+    chart_data = {}
 
-    
+    chart_data = {
+        'chart_time': [],
+        'T_soak1': [],
+        'T_soak2': [],
+        'T_soak3': [],
+        'T_soak4': [],
+        'T_soak5': [],
+        'T_soak6': [],
+        'T_soak7': [],
+        'T_soak8': [],
+    }
+    for entry in records:
+        chart_data['chart_time'].append(entry.chart_time)
+        chart_data['T_soak1'].append(entry.T_soak1)
+        chart_data['T_soak2'].append(entry.T_soak2)
+        chart_data['T_soak3'].append(entry.T_soak3)
+        chart_data['T_soak4'].append(entry.T_soak4)
+        chart_data['T_soak5'].append(entry.T_soak5)
+        chart_data['T_soak6'].append(entry.T_soak6)
+        chart_data['T_soak7'].append(entry.T_soak7)
+        chart_data['T_soak8'].append(entry.T_soak8)
+    for i in chart_data:
+        chart_data[i].reverse()
+    print (chart_data)
+    return jsonify(data = chart_data)
+
+@app.route('/_update_data_soak_all')
+def update_data_soak_all():
+    records = soak_app.SoakData.query.order_by(soak_app.SoakData.timestamp.desc()).limit(1).all()
+    chart_data = {
+        'chart_time1': 0,
+        'chart_time2': 0,
+        'chart_time3': 0,
+        'chart_time4': 0,
+        'chart_time5': 0,
+        'chart_time6': 0,
+        'chart_time7': 0,
+        'chart_time8': 0,
+        'T_soak1': 0,
+        'T_soak2': 0,
+        'T_soak3': 0,
+        'T_soak4': 0,
+        'T_soak5': 0,
+        'T_soak6': 0,
+        'T_soak7': 0,
+        'T_soak8': 0,
+    }
+    for entry in records:
+        chart_data['chart_time1'] = (entry.chart_time)
+        chart_data['chart_time2'] = (entry.chart_time)
+        chart_data['chart_time3'] = (entry.chart_time)
+        chart_data['chart_time4'] = (entry.chart_time)
+        chart_data['chart_time5'] = (entry.chart_time)
+        chart_data['chart_time6'] = (entry.chart_time)
+        chart_data['chart_time7'] = (entry.chart_time)
+        chart_data['chart_time8'] = (entry.chart_time)
+        chart_data['T_soak1'] = (entry.T_soak1)
+        chart_data['T_soak2'] = (entry.T_soak2)
+        chart_data['T_soak3'] = (entry.T_soak3)
+        chart_data['T_soak4'] = (entry.T_soak4)
+        chart_data['T_soak5'] = (entry.T_soak5)
+        chart_data['T_soak6'] = (entry.T_soak6)
+        chart_data['T_soak7'] = (entry.T_soak7)
+        chart_data['T_soak8'] = (entry.T_soak8)
+    return jsonify(data= chart_data)
+
+@app.route('/_update_data_soak1') # update chart data
+def update_data_soak1():
+    records = soak_app.SoakData.query.order_by(soak_app.SoakData.timestamp.desc()).limit(1).all()
+    chart_data = {
+        'chart_time': 0,
+        'T_soak1': 0,
+    }
+    for entry in records:
+        chart_data['chart_time'] = (entry.chart_time)
+        chart_data['T_soak1'] = (entry.T_soak1)
+    return jsonify(data= chart_data)
+
+@app.route('/_update_data_soak2') # update chart data
+def update_data_soak2():
+    records = soak_app.SoakData.query.order_by(soak_app.SoakData.timestamp.desc()).limit(1).all()
+    chart_data = {
+        'T_soak2': 0,
+    }
+    for entry in records:
+        chart_data['chart_time'] = (entry.chart_time)
+        chart_data['T_soak2'] = (entry.T_soak2)    
+    return jsonify(data= chart_data)
+
+@app.route('/_update_data_soak3') # update chart data
+def update_data_soak3():
+    records = soak_app.SoakData.query.order_by(soak_app.SoakData.timestamp.desc()).limit(1).all()
+    chart_data = {
+        'T_soak3': 0,
+    }
+    for entry in records:
+        chart_data['chart_time'] = (entry.chart_time)
+        chart_data['T_soak3'] = (entry.T_soak3)    
+    return jsonify(data= chart_data)
+
+@app.route('/_update_data_soak4') # update chart data
+def update_data_soak4():
+    records = soak_app.SoakData.query.order_by(soak_app.SoakData.timestamp.desc()).limit(1).all()
+    chart_data = {
+        'T_soak4': 0,
+    }
+    for entry in records:
+        chart_data['chart_time'] = (entry.chart_time)
+        chart_data['T_soak4'] = (entry.T_soak4)    
+    return jsonify(data= chart_data)
+
+@app.route('/_update_data_soak5') # update chart data
+def update_data_soak5():
+    records = soak_app.SoakData.query.order_by(soak_app.SoakData.timestamp.desc()).limit(1).all()
+    chart_data = {
+        'T_soak5': 0,
+    }
+    for entry in records:
+        chart_data['chart_time'] = (entry.chart_time)
+        chart_data['T_soak5'] = (entry.T_soak5)    
+    return jsonify(data= chart_data)
+
+@app.route('/_update_data_soak6') # update chart data
+def update_data_soak6():
+    records = soak_app.SoakData.query.order_by(soak_app.SoakData.timestamp.desc()).limit(1).all()
+    chart_data = {
+        'T_soak6': 0,
+    }
+    for entry in records:
+        chart_data['chart_time'] = (entry.chart_time)
+        chart_data['T_soak6'] = (entry.T_soak6)    
+    return jsonify(data= chart_data)
+
+@app.route('/_initialize_data') # initialize data on page reload for each plot. !! FOR SHED SYSTEM NOT SOAK APP
+def initialize_data(): ## Made to work, needs to be updated with appropriate values if charts are changed
+    records = db_save.EngData.query.order_by(db_save.EngData.timestamp.desc()).limit(100).all()
+    print(type(records))
+    #message = {'time': time_record, 'temperature': temperature_record, 'humidity': humidity_record}
     T_shed2 = []
     T_shed3 = []
     Valve_shed3_hot = []
@@ -201,6 +356,8 @@ def initialize_data(): ## Made to work, needs to be updated with appropriate val
     Valve_shed3_hot.reverse()
     print("time values are: ",time)
     return jsonify(time=time, T_shed2=T_shed2,T_shed3=T_shed3, Valve_shed3_hot=Valve_shed3_hot, Valve_shed2_hot=Valve_shed2_hot, Valve_shed2_cold=Valve_shed2_cold)
+
+
 
 @app.route('/_update_data') # update chart data
 def update_data():
@@ -257,6 +414,7 @@ def background_tasks(queue=Queue):
         t_now = datetime.now()
         ##### Scheduled tasks for background ###
         read_daq()
+        
         update_calculated_variables()
         alarm_monitor()  # Alarm monitor needs to be before update_display_variables() for some reason vars_eng is updated in that function?
         shed_pid()
@@ -272,12 +430,13 @@ def dataHandler():
     while True:
         ##### Scheduled tasks for background ###
         db_save.save_data(vars_raw, vars_eng)
+        soak_app.save_data()
         records = vars_eng #db_save.EngData.query.order_by(db_save.EngData.timestamp.desc()).limit(1).all()
         #print("Engineering Values saved to 'shedDB.db'")
         #---- Un-comment and edit below if socket to be used---------##
         #socketio.emit('newchartdata3', {'T_shed3':records['T_shed3'], 'Valve_shed3_hot': records['Valve_shed3_hot'], 'time':records['time']}, namespace='/test')
         #socketio.sleep(5)
-        sleep(60) # comment if socket used
+        sleep(300) # comment if socket used
 
 #---------------------- Update SHED operation functions ----------------------------------------------------------------
 
@@ -337,12 +496,12 @@ def shed_pid(): #shed_label should be SHED2 or 3 depending which is active
  
 
 
-def pid_onoff(pid_shed):
+def pid_onoff(pid_shed):    #function for when PID control button is pressed
     for key, value in pid_shed.items():
         temp_shedvar = key[4:].upper()
         shed_status[temp_shedvar].change_pid(value)
 
-def setpoint_change(task):
+def setpoint_change(task):  #function to change setpoint Temperature of SHED 
     for key, value in task.items():
         temp_shedvar = key[-5:].upper()
         temp_change = key[-7].lower()
@@ -360,9 +519,7 @@ def update_calculated_variables():
 
 def update_display_variables():
     vars_disp = vars_eng
-    # vars_disp["T_shed2"] = str(round(float(vars_eng["T_shed2"]), 1)) + u'\N{DEGREE SIGN}' + "C"
-    # vars_disp["T_shed3"] = str(round(float(vars_eng["T_shed3"]),1)) + u'\N{DEGREE SIGN}' + "C"
-
+    
     for key in vars_eng.keys():
         if "Flowmeter" in key:
             vars_disp[key] = str(round(float(vars_eng[key]),2))# + " GPM"

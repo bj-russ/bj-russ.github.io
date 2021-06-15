@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "SHED/SHED_sidebar.html" %}
 {% block content %}
 
 <link rel="stylesheet" type="text/css" href="/static/styles/all_health.css">
@@ -319,7 +319,7 @@
                             <div id="timer_shed3">TIMER</div>
                         </td>
                         <td style="width:5%">
-                            <div id="timer_status_shed3">Status</div>
+                            <div id="timer_status_shed3_onOff">Status</div>
                         </td>
                     </tr>
                     <tr>
@@ -332,7 +332,7 @@
             </div>
         </div>
         <div class="row">
-        <div class="content white">
+        <div class="chart white">
             <canvas id="myChart_shed3"></canvas>
         </div>
     </div>

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "SHED/SHED_sidebar.html" %}
 
 {% block content %}
 <script src="static/js/base.js"></script>
@@ -18,7 +18,7 @@
         </div>
         <div class="inline">    
             <div>Cold Loop</div>
-            <div id="Pump_main_cold_onOff">0</div>
+            <div id="Pump_main_cold">0</div>
             <div>Flowrate</div>
             <div id="Flowmeter_main_cold">0</div>
             <div>Temperature</div>
@@ -67,11 +67,7 @@
     </div>
     <div id="MVDN_Placeholder_7">0</div>
     <div>
-        <button type="button" onclick="buttonClicked('Pump_shed3_hot')">Shed3 Pump Hot</button>
-    </div>
-    <div id="Pump_shed3_hot_onOff">NA</div>
-    <div>
-        <button type="button" onclick="buttonClicked('Pump_main_hot')">Main Pump Hot</button>
+        <input type="button" onclick="buttonClicked()" id="input_Pump_shed3_hot">Shed3 Pump Hot</button>
     </div>
 </div>
 </div>

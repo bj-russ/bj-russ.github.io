@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<body>
+  <div class="sidenav">
+    <a href="soaktemps">Home</a>
+    <a href="monitor">Monitor</a>
+    <a href="Results">Results</a>
+  </div>
+  <div class="main">
+    {% block main %}
+    {% endblock %}
+  </div>
+
+  </body>
+{% endblock %}

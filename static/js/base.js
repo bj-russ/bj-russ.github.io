@@ -345,7 +345,7 @@ $(document).ready(function () {
                 yAxes: [{
                     ticks: {
                         beginAtZero: true,
-                        suggestedMax: 500,
+                        suggestedMax: 40,
                         fontColor: '#c45850'
                     },
                     id: 'A',
@@ -371,7 +371,7 @@ $(document).ready(function () {
                 }],
                 xAxes: [{
                     ticks: {
-                        maxTicksLimit: 24,
+                        maxTicksLimit: 15,
                         maxRotation: 45,
                         minRotation: 45
                     },
@@ -400,7 +400,7 @@ $(document).ready(function () {
                 yAxes: [{
                     ticks: {
                         beginAtZero: true,
-                        suggestedMax: 500,
+                        suggestedMax: 40,
                         fontColor: '#c45850'
                     },
                     id: 'A',
@@ -485,7 +485,7 @@ $(document).ready(function () {
             type: "GET",
             success: function (response) {
                 var temp_data = response.T_shed2;
-                var valve_data = response.Valve_shed2_cold;
+                var valve_data = response.Valve_shed2_hot;
                 var time_data = response.time;
                 var record_data = { temp: temp_data, valve: valve_data, time: time_data };
                 successinitialized(myChart, record_data); //update chart with data
@@ -537,7 +537,7 @@ $(document).ready(function () {
             type: "GET",
             success: function (response) {
                 var temp_data = response.data.T_shed2;
-                var valve_data = response.data.Valve_shed2_cold;
+                var valve_data = response.data.Valve_shed2_hot;
                 var time_data = response.data.chart_time;
                 var new_data = [temp_data, valve_data,time_data];
 
